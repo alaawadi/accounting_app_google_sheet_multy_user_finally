@@ -1,0 +1,1652 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+  <title>دفتر التاجر — لوحة الإدارة</title>
+  <meta name="description" content="لوحة إدارة مستخدمي دفتر التاجر والمتاجر — للأدمن فقط">
+  <meta name="theme-color" content="#101A24">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+  <link rel="shortcut icon" href="./icons/favicon.ico">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+
+  <style>
+    @font-face{
+      font-family:'CairoHeader';
+      font-style:normal;
+      font-weight:200 1000;
+      font-display:swap;
+      src:url('./fonts/Cairo-arabic.woff2') format('woff2');
+      unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1;
+    }
+    @font-face{
+      font-family:'CairoHeader';
+      font-style:normal;
+      font-weight:200 1000;
+      font-display:swap;
+      src:url('./fonts/Cairo-latin.woff2') format('woff2');
+      unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+    :root{
+      --ink:#182229; --ink-soft:#3d4a54; --muted:#736b5c;
+      --paper:#F7F3EA; --card:#FFFFFF; --line:#E6DFCF;
+      --accent:#F28C0F; --accent-deep:#C96F00; --accent-soft:#FDE7C7;
+      --teal:#0F6B67; --teal-soft:#DCEEEC;
+      --navy:#101A24; --success:#1E8E5A; --success-soft:#DCF3E7;
+      --danger:#D6473F; --danger-soft:#FBE1DF;
+      --radius:16px; --shadow:0 6px 20px rgba(16,26,36,0.10);
+    }
+    *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+    html,body{margin:0; padding:0;}
+    body{
+      font-family:'Tajawal','Segoe UI',Tahoma,Geneva,Arial,sans-serif;
+      background:var(--paper); color:var(--ink); min-height:100vh;
+      padding-bottom:calc(28px + env(safe-area-inset-bottom));
+      -webkit-user-select:none; user-select:none;
+    }
+    input,select,button{font-family:inherit;}
+    input{-webkit-user-select:text; user-select:text;}
+    h1,h2,.display{font-family:'Cairo','Segoe UI',Tahoma,Geneva,Arial,sans-serif;}
+
+    /* ===== الهيدر ===== */
+    .topbar{
+      display:flex; align-items:center; gap:12px;
+      padding:calc(12px + env(safe-area-inset-top)) 16px 12px;
+      background:linear-gradient(180deg,#13202C 0%, #101A24 100%);
+      color:#fff; box-shadow:0 4px 16px rgba(16,26,36,.22);
+      position:sticky; top:0; z-index:30;
+    }
+    .topbar .brand{display:flex; align-items:center; gap:10px; min-width:0;}
+    .topbar .title{font-family:'CairoHeader','Cairo',Tahoma,sans-serif; font-weight:800; font-size:19px; letter-spacing:.2px;}
+    .topbar .sub{font-size:11.5px; color:#9FB0BC; font-weight:700; margin-top:1px;}
+    .topbar .spacer{margin-right:auto;}
+    .topbar .who{
+      display:flex; flex-direction:column; align-items:flex-end; line-height:1.35;
+      font-size:12.5px; font-weight:800; color:#E9EEF3; max-width:42vw; overflow:hidden;
+    }
+    .topbar .who span{font-size:10.5px; color:#9FB0BC; font-weight:700; direction:ltr; unicode-bidi:plaintext;}
+    .top-actions{display:flex; align-items:center; gap:8px; flex-shrink:0;}
+    .icon-btn{
+      width:42px; height:42px; border-radius:14px; display:flex; align-items:center; justify-content:center;
+      background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); color:#E9EEF3;
+      cursor:pointer; padding:0; transition:background .15s ease, transform .1s ease;
+    }
+    .icon-btn:active{transform:scale(.94);}
+    .icon-btn.danger{background:rgba(214,71,63,.16); border-color:rgba(214,71,63,.32); color:#FFB4A2;}
+    .icon-btn.spin svg{animation:spin 1s linear infinite;}
+    @keyframes spin{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+    /* ===== المحتوى ===== */
+    .wrap{max-width:1180px; margin:0 auto; padding:16px;}
+    .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:10px; margin-bottom:14px;}
+    .stat{
+      background:var(--card); border:1px solid var(--line); border-radius:var(--radius);
+      padding:12px 14px; box-shadow:0 2px 10px rgba(16,26,36,.05);
+    }
+    .stat .k{font-size:11.5px; font-weight:800; color:var(--muted);}
+    .stat .v{font-size:22px; font-weight:800; color:var(--navy); margin-top:2px; font-family:'CairoHeader','Cairo',Tahoma,sans-serif;}
+    .stat.teal .v{color:var(--teal);}
+    .stat.accent .v{color:var(--accent-deep);}
+
+    .toolbar{display:flex; align-items:center; gap:10px; margin-bottom:12px; flex-wrap:wrap;}
+    .btn-add{
+      display:inline-flex; align-items:center; gap:8px; flex:0 0 auto;
+      background:var(--teal); color:#fff; border:none; border-radius:14px;
+      padding:12px 16px; font-size:14px; font-weight:800; cursor:pointer; white-space:nowrap;
+      box-shadow:0 3px 10px rgba(15,107,103,.22);
+    }
+    .btn-add:active{transform:translateY(1px); background:#0C5754;}
+    .search-box{position:relative; flex:1; min-width:220px;}
+    .search-box input{
+      width:100%; padding:12px 42px 12px 14px; font-size:15px; font-weight:600;
+      background:#fff; border:1.6px solid var(--line); border-radius:14px; color:var(--ink); outline:none;
+    }
+    .search-box input:focus{border-color:var(--teal); box-shadow:0 0 0 3px rgba(15,107,103,.13);}
+    .search-box .mag{position:absolute; right:14px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none;}
+    .seg{display:flex; background:#fff; border:1px solid var(--line); border-radius:14px; padding:4px; gap:4px; flex-wrap:wrap;}
+    .seg button{
+      border:none; background:none; padding:9px 13px; border-radius:11px; font-size:13px; font-weight:800;
+      color:var(--muted); cursor:pointer; white-space:nowrap;
+    }
+    .seg button.active{background:var(--teal-soft); color:var(--teal);}
+
+    /* ===== الجدول ===== */
+    .card{background:var(--card); border:1px solid var(--line); border-radius:18px; box-shadow:var(--shadow); overflow:hidden;}
+    .table-scroll{overflow-x:auto; -webkit-overflow-scrolling:touch;}
+    table{width:100%; border-collapse:collapse; min-width:1060px;}
+    thead th{
+      background:var(--teal-soft); color:#0B4D48; font-size:12px; font-weight:800;
+      text-align:right; padding:12px 12px; white-space:nowrap; border-bottom:1px solid #CBE3DF;
+      position:sticky; top:0; z-index:2;
+    }
+    tbody td{
+      padding:11px 12px; font-size:13.5px; font-weight:700; color:var(--ink-soft);
+      border-bottom:1px solid #F1EBDD; vertical-align:middle; white-space:nowrap;
+    }
+    tbody tr:last-child td{border-bottom:none;}
+    tbody tr:active{background:#FCF8EF;}
+    .u-name{font-weight:800; color:var(--navy);}
+    .u-phone{direction:ltr; unicode-bidi:plaintext; font-weight:700; color:var(--muted); font-size:12.5px;}
+    .chip{
+      display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:800;
+      border-radius:99px; padding:4px 10px; border:1px solid transparent; white-space:nowrap;
+    }
+    .chip-owner{color:#0B4D48; background:var(--teal-soft); border-color:#BEE1DD;}
+    .chip-acct{color:#7A4A00; background:var(--accent-soft); border-color:#F3D6A6;}
+    .chip-none{color:var(--muted); background:#F4F0E6; border-color:var(--line);}
+    .chip-admin{color:#6B2E8B; background:#F3E8FA; border-color:#E0C7F0;}
+    .chip-ok{color:#0F5C3A; background:var(--success-soft); border-color:#BFE6D2;}
+    .chip-bad{color:#8b2525; background:var(--danger-soft); border-color:#F1C4C0;}
+    .code{
+      direction:ltr; unicode-bidi:isolate; font-weight:800; letter-spacing:1.4px; font-size:12.5px;
+      background:#FCFAF5; border:1px dashed var(--accent); color:var(--navy);
+      border-radius:8px; padding:3px 9px;
+    }
+    .store-name{font-weight:800; color:var(--teal);}
+    .muted{color:var(--muted); font-weight:700; font-size:12.5px;}
+    .row-btn{
+      border:1px solid var(--line); background:#fff; color:var(--teal); font-weight:800; font-size:12.5px;
+      border-radius:11px; padding:8px 12px; cursor:pointer;
+    }
+    .row-btn:active{background:var(--teal-soft);}
+    .act-cell{display:flex; align-items:center; gap:6px;}
+    .icon-act{
+      width:34px; height:34px; border-radius:10px; border:1px solid var(--line); background:#fff;
+      display:inline-flex; align-items:center; justify-content:center; cursor:pointer; padding:0; color:var(--teal);
+      flex:0 0 auto;
+    }
+    .icon-act:active{background:var(--teal-soft);}
+    .icon-act.members{color:#7A4A00; background:#FFFBF3; border-color:#F3D6A6;}
+    .empty{padding:34px 16px; text-align:center; color:var(--muted); font-weight:700; font-size:14px;}
+
+    /* ===== نافذة التعيين (شيت سفلي) ===== */
+    .overlay{
+      position:fixed; inset:0; background:rgba(16,26,36,.45); backdrop-filter:blur(2px);
+      display:flex; align-items:flex-end; justify-content:center; z-index:60; opacity:0; pointer-events:none;
+      transition:opacity .2s ease;
+    }
+    .overlay.open{opacity:1; pointer-events:auto;}
+    .sheet{
+      width:100%; max-width:640px; max-height:88vh; overflow-y:auto;
+      background:var(--paper); border-radius:22px 22px 0 0;
+      border:1px solid var(--line); border-bottom:none;
+      padding:10px 18px calc(20px + env(safe-area-inset-bottom));
+      transform:translateY(24px); transition:transform .22s ease;
+    }
+    .overlay.open .sheet{transform:translateY(0);}
+    .grab{width:44px; height:5px; border-radius:99px; background:#D9D1C0; margin:4px auto 14px;}
+    .sheet h2{font-size:18px; font-weight:800; margin:0 0 2px; color:var(--navy);}
+    .sheet .who-line{font-size:12.5px; font-weight:700; color:var(--muted); margin-bottom:14px;}
+    .field{margin-bottom:14px; text-align:right;}
+    .field label{display:block; font-size:13px; font-weight:800; color:var(--ink-soft); margin-bottom:7px;}
+    .field input,.field select{
+      width:100%; padding:13px 14px; font-size:15px; font-weight:700;
+      background:#FCFAF5; border:1.6px solid var(--line); border-radius:13px; color:var(--ink); outline:none;
+    }
+    .field input:focus,.field select:focus{border-color:var(--teal); box-shadow:0 0 0 3px rgba(15,107,103,.13); background:#fff;}
+    .field .hint{margin:7px 0 0; font-size:12px; font-weight:700; color:var(--muted); line-height:1.6;}
+    .field input.ph-bad{border-color:var(--danger); background:var(--danger-soft);}
+    .field input.ph-bad:focus{border-color:var(--danger); box-shadow:0 0 0 3px rgba(214,71,63,.14); background:#fff;}
+    .field input.ph-ok{border-color:var(--success); background:var(--success-soft);}
+    .field input.ph-ok:focus{border-color:var(--success); box-shadow:0 0 0 3px rgba(30,142,90,.14); background:#fff;}
+    .field .hint.ph-bad{color:var(--danger);}
+    .field .hint.ph-ok{color:var(--success);}
+    .field input.req-bad{border-color:var(--danger); background:var(--danger-soft);}
+    .field input.req-bad:focus{border-color:var(--danger); box-shadow:0 0 0 3px rgba(214,71,63,.14); background:#fff;}
+
+    /* ===== قائمة اختيار المتجر: انبوت بحث + اقتراحات أسفله ===== */
+    .combo{position:relative;}
+    .combo-input{
+      width:100%; padding:13px 42px 13px 14px; font-size:15px; font-weight:700; text-align:right;
+      background:#FCFAF5; border:1.6px solid var(--line); border-radius:13px;
+      color:var(--muted); outline:none;
+    }
+    .combo-input.filled{color:var(--ink);}
+    .combo-input:focus{border-color:var(--teal); box-shadow:0 0 0 3px rgba(15,107,103,.13); background:#fff;}
+    .combo-input::placeholder{color:var(--muted); font-weight:700;}
+    .combo-chev{
+      position:absolute; top:50%; left:10px; transform:translateY(-50%);
+      color:var(--muted); background:none; border:none; padding:6px; cursor:pointer;
+      display:flex; align-items:center; border-radius:8px;
+    }
+    .combo-chev:active{background:var(--teal-soft); color:var(--teal);}
+    .combo-list{
+      margin-top:4px; background:#fff; border:1.6px solid var(--line); border-radius:13px;
+      box-shadow:var(--shadow); max-height:220px; overflow-y:auto; -webkit-overflow-scrolling:touch;
+    }
+    .combo-list[hidden]{display:none;}
+    .combo-item{
+      padding:11px 12px; border-radius:10px; font-size:13.5px; font-weight:700; color:var(--ink-soft);
+      cursor:pointer; line-height:1.5;
+    }
+    .combo-item:active,.combo-item:hover{background:var(--teal-soft); color:var(--teal);}
+    .combo-item.active{background:var(--teal-soft); color:var(--teal);}
+    .combo-empty{padding:14px 10px; text-align:center; color:var(--muted); font-weight:700; font-size:13px;}
+    .role-seg{display:grid; grid-template-columns:repeat(2,1fr); gap:8px;}
+    .role-seg button{
+      border:1.6px solid var(--line); background:#fff; border-radius:13px; padding:12px 6px;
+      font-size:13.5px; font-weight:800; color:var(--ink-soft); cursor:pointer;
+    }
+    .role-seg button.active{border-color:var(--teal); background:var(--teal-soft); color:var(--teal);}
+    .code-row{display:flex; align-items:center; gap:10px; flex-wrap:wrap; margin:2px 0 14px;}
+    .code-row .lbl{font-size:12.5px; font-weight:800; color:var(--muted);}
+
+    /* ===== قائمة المحاسبين (شيت 👥) ===== */
+    .member{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:#fff; border:1px solid var(--line); border-radius:14px; padding:11px 13px; margin-bottom:8px;
+    }
+    .member-main{display:flex; flex-direction:column; gap:2px; min-width:0;}
+    .member-main strong{font-size:13.5px; font-weight:800; color:var(--navy);}
+    .member-main span{font-size:11.5px; font-weight:700; color:var(--muted); direction:ltr; unicode-bidi:plaintext;}
+    .member-side{display:flex; align-items:center; gap:6px; flex-shrink:0;}
+
+    /* ===== فورم تعديل بيانات المستخدم ===== */
+    .form-grid{display:grid; grid-template-columns:1fr 1fr; gap:0 12px;}
+    .form-grid .full{grid-column:1 / -1;}
+    .field input[disabled],.field select[disabled]{
+      background:#F2EFE6; color:var(--muted); border-style:dashed; opacity:1; -webkit-text-fill-color:var(--muted);
+    }
+    .ro-line{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      background:#fff; border:1px dashed var(--line); border-radius:12px; padding:9px 12px; margin-bottom:8px;
+      font-size:12.5px; font-weight:700; color:var(--muted);
+    }
+    .ro-line b{color:var(--ink); font-weight:800; font-size:13px;}
+    .check-row{display:flex; align-items:center; gap:10px; background:#fff; border:1px solid var(--line); border-radius:13px; padding:12px 13px; cursor:pointer;}
+    .check-row input{width:20px; height:20px; accent-color:var(--teal); flex:0 0 auto;}
+    .check-row .t{font-size:13.5px; font-weight:800; color:var(--ink);}
+    .check-row .d{font-size:11.5px; font-weight:700; color:var(--muted); margin-top:2px;}
+    .sheet-title-row{
+      display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:2px;
+      position:sticky; top:-10px; z-index:3; background:var(--paper);
+      padding-top:10px; padding-bottom:2px;
+    }
+    .sheet-x{
+      flex:0 0 auto; width:34px; height:34px; border-radius:50%;
+      border:1.5px solid var(--line); background:#fff; color:var(--ink-soft);
+      display:flex; align-items:center; justify-content:center; cursor:pointer;
+    }
+    .sheet-x:active{background:var(--teal-soft); color:var(--teal);}
+    .sheet.dragging{transition:none !important;}
+    .sheet-actions{display:flex; gap:10px; margin-top:6px;}
+    .btn{
+      flex:1; border:none; border-radius:14px; padding:14px 16px; font-size:15px; font-weight:800; cursor:pointer;
+    }
+    .btn-primary{background:var(--teal); color:#fff; box-shadow:0 6px 16px rgba(15,107,103,.28);}
+    .btn-primary:disabled{opacity:.6;}
+    .btn-ghost{background:#fff; border:1.6px solid var(--line); color:var(--ink-soft); flex:0 0 auto;}
+    .err-box{
+      background:var(--danger-soft); border:1px solid #F1C4C0; color:#8b2525;
+      border-radius:12px; padding:10px 12px; font-size:13px; font-weight:700; line-height:1.6; margin-bottom:12px;
+    }
+    .err-box[hidden]{display:none;}
+
+    /* ===== تنبيه علوي ===== */
+    #toast{
+      position:fixed; top:calc(14px + env(safe-area-inset-top)); left:50%; transform:translate(-50%,-16px);
+      background:var(--navy); color:#fff; font-size:13.5px; font-weight:800;
+      padding:11px 18px; border-radius:99px; box-shadow:0 8px 24px rgba(16,26,36,.3);
+      opacity:0; pointer-events:none; transition:opacity .2s ease, transform .2s ease; z-index:90; max-width:92vw; text-align:center;
+    }
+    #toast.show{opacity:1; transform:translate(-50%,0);}
+
+    /* ===== شاشة الحماية/التحميل ===== */
+    #gate{
+      position:fixed; inset:0; background:var(--paper); z-index:100;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px;
+      color:var(--ink-soft); font-weight:800; font-size:14.5px; text-align:center; padding:20px;
+    }
+    #gate[hidden]{display:none;}
+    .spinner{
+      width:38px; height:38px; border-radius:50%;
+      border:4px solid var(--line); border-top-color:var(--teal);
+      animation:spin .9s linear infinite;
+    }
+    @media (min-width:900px){
+      .sheet{border-radius:22px; margin-bottom:5vh; max-height:80vh;}
+      .overlay{align-items:center;}
+    }
+  </style>
+</head>
+<body>
+  <div id="gate"><div class="spinner"></div><div id="gateText">جارٍ فتح لوحة الإدارة…</div></div>
+  <div id="toast"></div>
+
+  <header class="topbar">
+    <div class="brand">
+      <svg width="38" height="38" viewBox="0 0 40 40" fill="none" aria-hidden="true">
+        <defs>
+          <linearGradient id="g1" x1="0" y1="0" x2="40" y2="40">
+            <stop stop-color="#F6A93B"></stop><stop offset="1" stop-color="#C96F00"></stop>
+          </linearGradient>
+        </defs>
+        <rect width="40" height="40" rx="12" fill="url(#g1)"></rect>
+        <path d="M11 9a2 2 0 0 1 2-2h9.5L26 10.5V31a2 2 0 0 1-2 2H13a2 2 0 0 1-2-2V9Z" fill="#fff" opacity="0.97"></path>
+        <rect x="14.3" y="15.2" width="8.4" height="1.7" rx="0.85" fill="#0F6B67"></rect>
+        <rect x="14.3" y="19.2" width="8.4" height="1.7" rx="0.85" fill="#0F6B67" opacity="0.55"></rect>
+        <rect x="14.3" y="23.2" width="5.6" height="1.7" rx="0.85" fill="#0F6B67" opacity="0.55"></rect>
+      </svg>
+      <div>
+        <div class="title">لوحة الإدارة</div>
+        <div class="sub">المستخدمون والمتاجر</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="who" id="whoBox"><div>الأدمن</div><span></span></div>
+    <div class="top-actions">
+      <button type="button" class="icon-btn" id="refreshBtn" title="تحديث" aria-label="تحديث القائمة">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-2.64-6.36"></path><path d="M21 3v6h-6"></path></svg>
+      </button>
+      <button type="button" class="icon-btn danger" id="logoutBtn" title="خروج" aria-label="تسجيل الخروج">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><path d="M16 17l5-5-5-5"></path><path d="M21 12H9"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="stats">
+      <div class="stat"><div class="k">إجمالي المستخدمين</div><div class="v" id="stUsers">—</div></div>
+      <div class="stat teal"><div class="k">المتاجر</div><div class="v" id="stStores">—</div></div>
+      <div class="stat teal"><div class="k">أصحاب المتاجر</div><div class="v" id="stOwners">—</div></div>
+      <div class="stat accent"><div class="k">المحاسبون</div><div class="v" id="stAccts">—</div></div>
+    </section>
+
+    <div class="toolbar">
+      <button type="button" class="btn-add" id="addUserBtn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+        مستخدم جديد
+      </button>
+      <div class="search-box">
+        <span class="mag">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        </span>
+        <input type="text" id="searchInput" placeholder="ابحث بالاسم أو رقم الهاتف…">
+      </div>
+      <div class="seg" id="filterSeg">
+        <button type="button" data-f="all" class="active">الكل</button>
+        <button type="button" data-f="owner">أصحاب المتاجر</button>
+        <button type="button" data-f="accountant">المحاسبون</button>
+        <button type="button" data-f="none">بدون متجر</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="table-scroll">
+        <table>
+          <thead>
+            <tr>
+              <th>الاسم</th>
+              <th>الهاتف</th>
+              <th>الدور</th>
+              <th>اسم المتجر</th>
+              <th>كود المتجر</th>
+              <th>الحالة</th>
+              <th>الاشتراك</th>
+              <th>آخر دخول</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="emptyBox" hidden>لا يوجد مستخدمون مطابقون</div>
+    </div>
+  </main>
+
+  <!-- نافذة تعيين الدور والمتجر -->
+  <div class="overlay" id="editorOverlay">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="edTitle">
+      <div class="grab"></div>
+      <div class="sheet-title-row">
+        <h2 id="edTitle">تعيين الدور</h2>
+        <button type="button" class="sheet-x" id="edX" aria-label="إغلاق">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+        </button>
+      </div>
+      <div class="who-line" id="edWho"></div>
+      <div class="err-box" id="edErr" hidden></div>
+
+      <div class="field">
+        <label>الدور داخل المنصة</label>
+        <div class="role-seg" id="edRoles">
+          <button type="button" data-role="owner">مالك متجر</button>
+          <button type="button" data-role="accountant">محاسب</button>
+          <button type="button" data-role="inventory">محاسب جرد</button>
+          <button type="button" data-role="cashier">محاسب كاشير</button>
+          <button type="button" data-role="pro">محاسب محترف</button>
+          <button type="button" data-role="none">بدون متجر</button>
+          <button type="button" data-role="admin">أدمن</button>
+        </div>
+      </div>
+
+      <div id="ownerBox" hidden>
+        <div class="field">
+          <label>اسم المتجر</label>
+          <input type="text" id="edStoreName" maxlength="60" placeholder="مثال: بقالة النور">
+          <div class="hint">يُنشأ متجر جديد باسمك أو يُحدَّث اسم متجره الحالي — الكود يُولَّد تلقائياً.</div>
+        </div>
+        <div class="code-row" id="edCodeRow" hidden>
+          <span class="lbl">كود المتجر:</span>
+          <span class="code" id="edCode"></span>
+        </div>
+      </div>
+
+      <div id="acctBox" hidden>
+        <div class="field">
+          <label>المتجر الذي سينضم إليه كمحاسب</label>
+          <div class="combo" id="edStoreCombo">
+            <input type="text" class="combo-input" placeholder="— اختر المتجر —" autocomplete="off" spellcheck="false">
+            <button type="button" class="combo-chev" aria-label="عرض كل المتاجر">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 9 6 6 6-6"></path></svg>
+            </button>
+            <div class="combo-list" hidden></div>
+          </div>
+          <div class="hint">اكتب للبحث بالاسم أو الكود أو المالك، ثم اختر من القائمة.</div>
+        </div>
+      </div>
+
+      <div id="noneBox" hidden>
+        <div class="hint" style="margin-bottom:12px; font-size:12.5px; font-weight:700; color:var(--muted); line-height:1.7;">
+          سيُفصل هذا الحساب عن متجره الحالي (إن كان منتمياً إليه) وتعود بياناته محلياً على جهازه.
+        </div>
+      </div>
+
+      <div id="adminBox" hidden>
+        <div class="hint" style="margin-bottom:12px; font-size:12.5px; font-weight:700; color:var(--muted); line-height:1.7;">
+          يُسجَّل في عمود «الصلاحية»: أدمن — يفتح له لوحة الإدارة فقط ولا يدخل التطبيق العادي.
+        </div>
+      </div>
+
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-primary" id="edSave">حفظ التعيين</button>
+        <button type="button" class="btn btn-ghost" id="edCancel">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة تعديل بيانات المستخدم (كل أعمدة الشيت) -->
+  <div class="overlay" id="editOverlay">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="ueTitle">
+      <div class="grab"></div>
+      <div class="sheet-title-row">
+        <h2 id="ueTitle">تعديل بيانات المستخدم</h2>
+        <button type="button" class="sheet-x" id="ueX" aria-label="إغلاق">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+        </button>
+      </div>
+      <div class="who-line" id="ueWho"></div>
+      <div class="err-box" id="ueErr" hidden></div>
+
+      <div class="form-grid">
+        <div class="field full">
+          <label>الاسم</label>
+          <input type="text" id="ueName" maxlength="60" placeholder="اسم المستخدم">
+        </div>
+        <div class="field">
+          <label>رقم الهاتف</label>
+          <input type="text" id="uePhone" dir="ltr" inputmode="numeric" maxlength="10" placeholder="056XXXXXXXX / 059XXXXXXXX">
+          <div class="hint" id="uePhoneHint"></div>
+          <div class="hint" id="uePhonePassHint">تغيير الرقم يستلزم كلمة مرور جديدة (الملح مشتقّ منه).</div>
+        </div>
+        <div class="field">
+          <label id="uePassLabel">كلمة مرور جديدة</label>
+          <input type="text" id="uePass" autocomplete="new-password" placeholder="اتركها فارغة = بدون تغيير">
+        </div>
+        <div class="field">
+          <label>الحالة</label>
+          <select id="ueStatus">
+            <option value="active">نشط</option>
+            <option value="blocked">موقوف</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>الاشتراك (أيام)</label>
+          <input type="number" id="ueSubDays" min="0" step="1" inputmode="numeric" placeholder="مثال: 30">
+          <div class="hint" id="ueSubZeroHint" hidden style="color:var(--danger);">0 أيام = منتهي الاشتراك — سيُوقف الحساب تلقائياً.</div>
+        </div>
+        <div class="field">
+          <label>بدأ الاشتراك</label>
+          <input type="date" id="ueSubStart">
+          <div class="hint" id="ueSubStartHint">—</div>
+        </div>
+        <div class="field">
+          <label>تاريخ انتهاء الاشتراك</label>
+          <input type="date" id="ueSubEnd">
+          <div class="hint" id="ueSubEndHint">—</div>
+        </div>
+        <div class="field">
+          <label>الجهاز (لإعادة الربط)</label>
+          <input type="text" id="ueDevice" dir="ltr" placeholder="امسح الخانة لفك ربط الجهاز">
+        </div>
+      </div>
+
+      <div id="ueRoleArea" hidden>
+        <div class="field">
+          <label>الدور داخل المنصة</label>
+          <div class="role-seg" id="ueRoles">
+            <button type="button" data-role="none" class="active">بدون متجر</button>
+            <button type="button" data-role="owner">مالك متجر</button>
+            <button type="button" data-role="accountant">محاسب</button>
+            <button type="button" data-role="inventory">محاسب جرد</button>
+            <button type="button" data-role="cashier">محاسب كاشير</button>
+            <button type="button" data-role="pro">محاسب محترف</button>
+            <button type="button" data-role="admin">أدمن</button>
+          </div>
+        </div>
+        <div id="ueOwnerBox" hidden>
+          <div class="field">
+            <label>اسم المتجر</label>
+            <input type="text" id="ueStoreName" maxlength="60" placeholder="مثال: بقالة النور">
+            <div class="hint">يُنشأ متجر جديد باسمك — الكود يُولَّد تلقائياً.</div>
+          </div>
+        </div>
+        <div id="ueAcctBox" hidden>
+          <div class="field">
+            <label>المتجر الذي سينضم إليه كمحاسب</label>
+            <div class="combo" id="ueStoreCombo">
+              <input type="text" class="combo-input" placeholder="— اختر المتجر —" autocomplete="off" spellcheck="false">
+              <button type="button" class="combo-chev" aria-label="عرض كل المتاجر">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="m6 9 6 6 6-6"></path></svg>
+              </button>
+              <div class="combo-list" hidden></div>
+            </div>
+            <div class="hint">اكتب للبحث بالاسم أو الكود أو المالك، ثم اختر من القائمة.</div>
+          </div>
+        </div>
+        <div id="ueAdminBox" hidden>
+          <div class="hint" style="margin-bottom:12px; font-size:12.5px; font-weight:700; color:var(--muted); line-height:1.7;">
+            يُسجَّل في عمود «الصلاحية»: أدمن — يفتح له لوحة الإدارة فقط ولا يدخل التطبيق العادي.
+          </div>
+        </div>
+      </div>
+
+      <div id="ueMeta" style="margin:4px 0 12px;">
+        <div class="ro-line"><span>أول دخول</span><b id="ueFirst">—</b></div>
+        <div class="ro-line"><span>آخر دخول</span><b id="ueLast">—</b></div>
+        <div class="ro-line"><span>عدد الدخولات</span><b id="ueLogins">—</b></div>
+      </div>
+
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-primary" id="ueSave">حفظ التعديلات</button>
+        <button type="button" class="btn btn-ghost" id="ueCancel">إلغاء</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- نافذة المحاسبون التابعون لصاحب المتجر (👥) -->
+  <div class="overlay" id="membersOverlay">
+    <div class="sheet" role="dialog" aria-modal="true" aria-labelledby="mbTitle">
+      <div class="grab"></div>
+      <div class="sheet-title-row">
+        <h2 id="mbTitle">محاسبو المتجر</h2>
+        <span class="code" id="mbCode" hidden></span>
+        <button type="button" class="sheet-x" id="mbX" aria-label="إغلاق">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+        </button>
+      </div>
+      <div class="who-line" id="mbWho"></div>
+      <div id="mbList"></div>
+      <div class="sheet-actions">
+        <button type="button" class="btn btn-ghost" id="mbClose" style="flex:1;">إغلاق</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="./auth.js"></script>
+  <script>
+  (function(){
+    'use strict';
+
+    var USERS = [];            /* آخر قائمة جاءت من الخادم */
+    var STORES = [];
+    var FILTER = 'all';
+    var QUERY = '';
+    var editing = null;        /* المستخدم المفتوح في نافذة التعيين */
+    var editRole = '';
+    var formMode = 'edit';     /* edit | create — نفس النافذة لكلا الوضعين */
+    var ueRole = 'none';       /* الدور المختار في وضع الإنشاء */
+    var loading = false;
+
+    var $ = function(id){ return document.getElementById(id); };
+
+    function esc(s){
+      return String(s === null || s === undefined ? '' : s)
+        .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function toast(text){
+      var el = $('toast');
+      el.textContent = text;
+      el.classList.add('show');
+      clearTimeout(el._t);
+      el._t = setTimeout(function(){ el.classList.remove('show'); }, 2600);
+    }
+
+    /* نداء خادم يحمل جلسة الدخول دائماً (phone+token) — بدونهما يرفض الخادم الطلب
+       بخطأ session ويبدأ تحويل لا ينتهي بين الداشبورد وصفحة تسجيل الدخول. */
+    function api(action, extra){
+      var a = DTAuth.readAuth() || {};
+      var body = { phone: a.phone || '', token: a.token || '' };
+      if(extra) for(var k in extra){ if(Object.prototype.hasOwnProperty.call(extra, k)) body[k] = extra[k]; }
+      return DTAuth.callApi(action, body);
+    }
+
+    function gate(text){ $('gateText').textContent = text || 'جارٍ فتح لوحة الإدارة…'; $('gate').hidden = false; }
+    function ungated(){ $('gate').hidden = true; }
+
+    /* ---------------- البوابة: جلسة أدمن فقط ---------------- */
+    function leaveToLogin(reason){
+      var url = './login.html';
+      if(reason) url += '?reason=' + encodeURIComponent(reason);
+      try{ location.replace(url); }catch(e){ location.href = url; }
+    }
+
+    function isAdminAuth(a){ return !!(a && a.role === 'admin'); }
+
+    function ensureAdmin(){
+      var a = DTAuth.readAuth();
+      if(!a || !DTAuth.sessionValid(a)){
+        if(a && DTAuth.subscriptionExpired(a)) leaveToLogin('sub_expired');
+        else if(a) leaveToLogin('session');
+        else leaveToLogin('');
+        return false;
+      }
+      if(isAdminAuth(a)) return true;
+      /* جلسة قديمة بلا حقل الدور — نسأل الخادم مرة واحدة */
+      gate('جارٍ التحقق من الصلاحية…');
+      DTAuth.callApi('verify', { phone: a.phone, token: a.token })
+        .then(function(r){
+          var fresh = DTAuth.readAuth();
+          if(r && r.ok === true){
+            if(fresh){ fresh.role = r.role || ''; DTAuth.writeAuth(fresh); }
+            if(r.role === 'admin'){ ungated(); boot(); return; }
+            leaveToLogin('');        /* ليس أدمناً: للتطبيق العادي */
+            return;
+          }
+          if(r && r.ok === false){
+            if(r.error === 'other_device') leaveToLogin('other_device');
+            else if(r.error === 'sub_expired') leaveToLogin('sub_expired');
+            else leaveToLogin('nosession');
+            return;
+          }
+          leaveToLogin('nosession');
+        })
+        .catch(function(){
+          /* بلا إنترنت ولا نعرف الصلاحية: لا نُدخل لوحة الإدارة */
+          toast('تعذّر الاتصال بالخادم — تحقق من الإنترنت');
+          leaveToLogin('');
+        });
+      return false;
+    }
+
+    function showWho(){
+      var a = DTAuth.readAuth() || {};
+      var box = $('whoBox');
+      var name = String(a.name || '').trim() || 'الأدمن';
+      box.firstElementChild.textContent = name;
+      box.querySelector('span').textContent = String(a.phone || '');
+    }
+
+    /* ---------------- جلب البيانات ---------------- */
+    function mapError(code){
+      var m = {
+        not_admin: 'هذا الإجراء متاح لحساب الأدمن فقط',
+        session: 'انتهت الجلسة — سجّل الدخول من جديد',
+        sub_expired: 'انتهى اشتراك الحساب',
+        blocked: 'الحساب موقوف',
+        user_not_found: 'لا يوجد حساب مسجّل بهذا الرقم',
+        self_demote: 'لا يمكنك تغيير صلاحية حسابك الخاص',
+        phone_exists: 'رقم الهاتف مستخدم لحساب آخر — اختر رقماً مختلفاً',
+        pass_required: 'تغيير الرقم يستلزم كلمة مرور جديدة (الملح مشتقّ من الرقم)',
+        bad_subdays: 'قيمة «الاشتراك (أيام)» غير صالحة — اكتب رقماً موجباً',
+        bad_code: 'المتجر غير موجود',
+        bad_request: 'طلب غير صالح',
+        busy: 'الخادم مشغولاً — أعد المحاولة بعد لحظات',
+        not_configured: 'لم يتم إعداد رابط الخادم في ملف auth.js',
+        timeout: 'انتهت مهلة الاتصال — تحقق من الإنترنت',
+        network: 'تعذّر الاتصال بالخادم',
+        bad_response: 'رد غير متوقّع من الخادم',
+        server: 'خطأ مؤقت في الخادم — أعد المحاولة'
+      };
+      return m[code] || 'تعذّرت العملية — أعد المحاولة';
+    }
+
+    function load(){
+      if(loading) return;
+      loading = true;
+      var btn = $('refreshBtn');
+      btn.classList.add('spin');
+      api('admin_list', {})
+        .then(function(r){
+          loading = false;
+          btn.classList.remove('spin');
+          if(!r || r.ok !== true){
+            if(r && (r.error === 'session' || r.error === 'not_admin' || r.error === 'sub_expired' || r.error === 'blocked')){
+              if(r.error === 'not_admin') leaveToLogin('');
+              else if(r.error === 'sub_expired') leaveToLogin('sub_expired');
+              else leaveToLogin(r.error === 'blocked' ? 'blocked' : 'nosession');
+              return;
+            }
+            toast(mapError(r && r.error));
+            return;
+          }
+          USERS = Array.isArray(r.users) ? r.users : [];
+          STORES = Array.isArray(r.stores) ? r.stores : [];
+          render();
+        })
+        .catch(function(){
+          loading = false;
+          btn.classList.remove('spin');
+          toast(mapError(navigator.onLine === false ? 'timeout' : 'network'));
+        });
+    }
+
+    /* ---------------- العرض ---------------- */
+    /* هل الدور المحاسبي التابع (يشمل الأنواع الأربعة)؟ */
+    function isAcctTypeRole(r){
+      return r === 'accountant' || r === 'inventory' || r === 'cashier' || r === 'pro';
+    }
+    function roleLabelOf(r){
+      if(r === 'owner') return 'مالك متجر';
+      if(r === 'inventory') return 'محاسب جرد';
+      if(r === 'cashier') return 'محاسب كاشير';
+      if(r === 'pro') return 'محاسب محترف';
+      if(r === 'accountant') return 'محاسب';
+      return '';
+    }
+    function roleChip(u){
+      var r = storeRoleOf(u);
+      if(r === 'owner') return '<span class="chip chip-owner">مالك متجر</span>';
+      if(isAcctTypeRole(r)) return '<span class="chip chip-acct">' + roleLabelOf(r) + '</span>';
+      return '<span class="chip chip-none">بدون متجر</span>';
+    }
+
+    function storeRoleOf(u){ return u.storeRole || 'none'; }
+
+    function matches(u){
+      if(FILTER === 'owner' && storeRoleOf(u) !== 'owner') return false;
+      if(FILTER === 'accountant' && !isAcctTypeRole(storeRoleOf(u))) return false;
+      if(FILTER === 'none' && storeRoleOf(u) !== 'none') return false;
+      if(!QUERY) return true;
+      var q = QUERY.replace(/\D+/g,'');
+      if(q && /\d/.test(QUERY)) return String(u.phone || '').indexOf(q) > -1;
+      var name = String(u.name || '');
+      return name.indexOf(QUERY) > -1
+        || String(u.storeName || '').indexOf(QUERY) > -1
+        || String(u.storeCode || '').toUpperCase().indexOf(QUERY.toUpperCase()) > -1;
+    }
+
+    function fmtDate(s){
+      var t = String(s || '');
+      if(!t || t === '0') return '<span class="muted">—</span>';
+      return esc(t);
+    }
+
+    function render(){
+      var tbody = $('tbody');
+      var rows = USERS.filter(matches);
+      var html = '';
+      for(var i = 0; i < rows.length; i++){
+        var u = rows[i];
+        var name = String(u.name || '').trim() || '<span class="muted">بدون اسم</span>';
+        var admin = u.admin ? ' <span class="chip chip-admin">أدمن</span>' : '';
+        var store = u.storeName
+          ? '<span class="store-name">' + esc(u.storeName) + '</span>'
+          : '<span class="muted">—</span>';
+        var code = u.storeCode ? '<span class="code">' + esc(u.storeCode) + '</span>' : '<span class="muted">—</span>';
+        var status = (u.status === 'blocked' || u.status === 'موقوف')
+          ? '<span class="chip chip-bad">موقوف</span>'
+          : '<span class="chip chip-ok">نشط</span>';
+        var sub = u.subActive
+          ? '<span class="chip chip-ok">' + esc(u.subLeft) + ' يوم</span>'
+          : '<span class="chip chip-bad">منتهي</span>';
+        var membersBtn = (storeRoleOf(u) === 'owner')
+          ? '<button type="button" class="icon-act members" data-act="members" data-i="' + i + '" title="محاسبو المتجر" aria-label="عرض محاسبي المتجر">' +
+            '<svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg></button>'
+          : '';
+        var editBtn = '<button type="button" class="icon-act" data-act="edit" data-i="' + i + '" title="تعديل بيانات المستخدم" aria-label="تعديل بيانات المستخدم">' +
+          '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path><path d="m15 5 4 4"></path></svg></button>';
+        html += '<tr>' +
+          '<td class="u-name">' + name + admin + '</td>' +
+          '<td class="u-phone">' + esc(u.phone) + '</td>' +
+          '<td>' + roleChip(u) + '</td>' +
+          '<td>' + store + '</td>' +
+          '<td>' + code + '</td>' +
+          '<td>' + status + '</td>' +
+          '<td>' + sub + '</td>' +
+          '<td>' + fmtDate(u.lastLogin) + '</td>' +
+          '<td><div class="act-cell">' + membersBtn + editBtn +
+            '<button type="button" class="row-btn" data-act="assign" data-i="' + i + '">تعيين الدور</button></div></td>' +
+        '</tr>';
+      }
+      tbody.innerHTML = html;
+      $('emptyBox').hidden = rows.length > 0;
+
+      /* الإحصائيات */
+      $('stUsers').textContent = USERS.length;
+      var owners = 0, accts = 0;
+      for(var s = 0; s < STORES.length; s++){
+        var st = STORES[s];
+        var members = st.members || [];
+        var hasOwner = false, hasAcct = false;
+        for(var m = 0; m < members.length; m++){
+          if(members[m].role === 'owner') hasOwner = true;
+          if(isAcctTypeRole(members[m].role)) hasAcct = true;
+        }
+        if(st.owner) hasOwner = true;
+        if(hasOwner) owners++;
+        if(hasAcct) accts++;
+      }
+      $('stStores').textContent = STORES.length;
+      $('stOwners').textContent = owners;
+      $('stAccts').textContent = accts;
+    }
+
+    /* ---------------- قائمة اختيار المتجر مع بحث ---------------- */
+    function storeOptionsList(){
+      var ownerName = {};
+      for(var i = 0; i < USERS.length; i++){
+        if(USERS[i].storeRole === 'owner') ownerName[USERS[i].phone] = USERS[i].name || USERS[i].phone;
+      }
+      var list = [];
+      for(var j = 0; j < STORES.length; j++){
+        var st = STORES[j];
+        if(!st.code && !st.id) continue;
+        list.push({
+          id: String(st.id || ''),
+          label: (st.name || 'متجر') + ' — ' + (st.code || '') + ' — ' + (ownerName[st.owner] || st.owner || '')
+        });
+      }
+      return list;
+    }
+
+    function makeStoreCombo(rootId){
+      var root = $(rootId);
+      var input = root.querySelector('.combo-input');
+      var listEl = root.querySelector('.combo-list');
+      var chev = root.querySelector('.combo-chev');
+      var options = [];
+      var value = '';
+
+      function labelOf(id){
+        for(var i = 0; i < options.length; i++) if(options[i].id === id) return options[i].label;
+        return '';
+      }
+      function render(q){
+        q = String(q || '').trim().toLowerCase();
+        var html = '', shown = 0;
+        for(var i = 0; i < options.length; i++){
+          var o = options[i];
+          if(q && String(o.label).toLowerCase().indexOf(q) === -1) continue;
+          shown++;
+          html += '<div class="combo-item' + (o.id === value ? ' active' : '') + '" data-id="' + esc(o.id) + '">' + esc(o.label) + '</div>';
+        }
+        if(!shown) html = '<div class="combo-empty">لا يوجد متجر مطابق</div>';
+        listEl.innerHTML = html;
+        listEl.hidden = false;
+      }
+      function close(){ listEl.hidden = true; }
+      function applyValue(v){
+        value = String(v || '');
+        input.value = labelOf(value);
+        input.classList.toggle('filled', !!value);
+      }
+
+      input.addEventListener('input', function(){
+        value = '';
+        input.classList.remove('filled');
+        render(this.value);
+      });
+      input.addEventListener('focus', function(){ render(this.value); });
+      input.addEventListener('keydown', function(e){
+        if(e.key === 'Escape') close();
+        if(e.key === 'Enter'){
+          e.preventDefault();
+          var first = listEl.querySelector('.combo-item');
+          if(first){ applyValue(first.getAttribute('data-id')); close(); }
+        }
+      });
+      input.addEventListener('blur', function(){
+        /* تأخير قصير حتى يُنفَّذ الضغط على عنصر الاقتراح قبل الإغلاق */
+        setTimeout(function(){
+          if(document.activeElement === input) return;
+          close();
+          if(value) return;
+          var txt = String(input.value || '').trim();
+          for(var i = 0; i < options.length; i++){
+            if(String(options[i].label).trim() === txt){ applyValue(options[i].id); return; }
+          }
+          input.value = '';
+          input.classList.remove('filled');
+        }, 150);
+      });
+      listEl.addEventListener('mousedown', function(e){ e.preventDefault(); });
+      listEl.addEventListener('click', function(e){
+        var it = e.target.closest ? e.target.closest('.combo-item') : null;
+        if(!it) return;
+        applyValue(it.getAttribute('data-id'));
+        close();
+      });
+      if(chev) chev.addEventListener('click', function(e){
+        e.preventDefault();
+        input.focus();
+        render('');
+      });
+
+      return {
+        setOptions: function(opts){
+          options = opts || [];
+          if(value && !labelOf(value)) applyValue('');
+        },
+        setValue: function(v){ applyValue(v); },
+        getValue: function(){ return value; }
+      };
+    }
+
+    var edStoreCombo = makeStoreCombo('edStoreCombo');
+    var ueStoreCombo = makeStoreCombo('ueStoreCombo');
+
+    /* ---------------- نافذة التعيين ---------------- */
+    function openEditor(u){
+      editing = u;
+      editRole = u.admin ? 'admin' : storeRoleOf(u);
+      $('edWho').innerHTML = esc(u.name || 'بدون اسم') + ' — <span dir="ltr" style="unicode-bidi:plaintext;">' + esc(u.phone) + '</span>';
+      $('edErr').hidden = true;
+      $('edStoreName').value = String(u.storeName || '');
+      $('edSave').disabled = false;
+      $('edSave').textContent = 'حفظ التعيين';
+
+      /* قائمة المتاجر للاختيار كمحاسب */
+      edStoreCombo.setOptions(storeOptionsList());
+      edStoreCombo.setValue((u.store && storeRoleOf(u) !== 'owner') ? u.store : '');
+
+      setEditRole(editRole);
+      $('editorOverlay').classList.add('open');
+    }
+
+    function setEditRole(role){
+      editRole = role;
+      var btns = $('edRoles').querySelectorAll('button');
+      for(var i = 0; i < btns.length; i++){
+        btns[i].classList.toggle('active', btns[i].getAttribute('data-role') === role);
+      }
+      $('ownerBox').hidden = role !== 'owner';
+      $('acctBox').hidden = !isAcctTypeRole(role);
+      $('noneBox').hidden = role !== 'none';
+      $('adminBox').hidden = role !== 'admin';
+      var showCode = (role === 'owner' && editing && editing.storeCode);
+      var acctLbl = $('acctBox').querySelector('label');
+      if(acctLbl) acctLbl.textContent = isAcctTypeRole(role) ? ('المتجر الذي سينضم إليه كـ«' + roleLabelOf(role) + '»') : 'المتجر الذي سينضم إليه كمحاسب';
+      $('edCodeRow').hidden = !showCode;
+      if(showCode) $('edCode').textContent = editing.storeCode;
+    }
+
+    function closeEditor(){
+      $('editorOverlay').classList.remove('open');
+      editing = null;
+    }
+
+    function saveAssign(){
+      if(!editing) return;
+      var payload = { target: editing.phone, role: editRole };
+      if(editRole === 'owner'){
+        var name = String($('edStoreName').value || '').trim();
+        if(!name){ showEdErr('اكتب اسم المتجر أولاً'); $('edStoreName').focus(); return; }
+        payload.storeName = name;
+      }
+      if(isAcctTypeRole(editRole)){
+        var sid = edStoreCombo.getValue();
+        if(!sid){ showEdErr('اختر المتجر الذي سينضم إليه'); return; }
+        payload.storeId = sid;
+      }
+      $('edSave').disabled = true;
+      $('edSave').textContent = 'جارٍ الحفظ…';
+      $('edErr').hidden = true;
+
+      api('admin_assign', payload)
+        .then(function(r){
+          if(!r || r.ok !== true){
+            $('edSave').disabled = false;
+            $('edSave').textContent = 'حفظ التعيين';
+            if(r && (r.error === 'session' || r.error === 'not_admin' || r.error === 'sub_expired')){ closeEditor(); load(); return; }
+            showEdErr(mapError(r && r.error));
+            return;
+          }
+          USERS = Array.isArray(r.users) ? r.users : [];
+          STORES = Array.isArray(r.stores) ? r.stores : [];
+          render();
+          closeEditor();
+          toast(editRole === 'admin' ? 'تم منح صلاحية الأدمن ✓'
+              : editRole === 'owner' ? 'تم حفظ المتجر وتعيين المالك ✓'
+              : isAcctTypeRole(editRole) ? ('تم تعيين ' + roleLabelOf(editRole) + ' في المتجر ✓')
+              : 'تم فصل الحساب عن متجره ✓');
+        })
+        .catch(function(){
+          $('edSave').disabled = false;
+          $('edSave').textContent = 'حفظ التعيين';
+          showEdErr(mapError(navigator.onLine === false ? 'timeout' : 'network'));
+        });
+    }
+
+    function showEdErr(msg){
+      var box = $('edErr');
+      box.textContent = msg || '';
+      box.hidden = !msg;
+    }
+
+    /* ---------------- نافذة تعديل بيانات المستخدم (كل أعمدة الشيت) ---------------- */
+    /* ------- تنسيق التواريخ: تحويل أي قيمة من الشيت إلى yyyy-MM-dd ------- */
+    function toAsciiDigits(s){
+      return String(s === null || s === undefined ? '' : s)
+        .replace(/[\u0660-\u0669]/g, function(c){ return String(c.charCodeAt(0) - 0x0660); })
+        .replace(/[\u06F0-\u06F9]/g, function(c){ return String(c.charCodeAt(0) - 0x06F0); });
+    }
+
+    function ymd_(y, m, d){
+      if(!(y >= 1900 && y <= 2200 && m >= 1 && m <= 12 && d >= 1 && d <= 31)) return '';
+      var dt = new Date(y, m - 1, d);
+      if(dt.getFullYear() !== y || dt.getMonth() !== m - 1 || dt.getDate() !== d) return '';
+      return y + '-' + ('0' + m).slice(-2) + '-' + ('0' + d).slice(-2);
+    }
+
+    function toDateInput(v){
+      if(v === null || v === undefined) return '';
+      var s = toAsciiDigits(v)
+        .replace(/[\u00A0\u2000-\u200F\u202A-\u202E\u2060-\u2069\uFEFF]/g, ' ')
+        .replace(/\s+/g, ' ').trim();
+      if(!s) return '';
+      var m = s.match(/^(\d{4})[-\/.](\d{1,2})[-\/.](\d{1,2})/);
+      if(m) return ymd_(Number(m[1]), Number(m[2]), Number(m[3]));
+      m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{4})/);
+      if(m){
+        var a = Number(m[1]), b = Number(m[2]), y = Number(m[3]);
+        if(a > 12) return ymd_(y, b, a);
+        if(b > 12) return ymd_(y, a, b);
+        return ymd_(y, b, a);
+      }
+      m = s.match(/^(\d{1,2})[-\/.](\d{1,2})[-\/.](\d{2})$/);
+      if(m){
+        var a2 = Number(m[1]), b2 = Number(m[2]), y2 = 2000 + Number(m[3]);
+        if(a2 > 12) return ymd_(y2, b2, a2);
+        if(b2 > 12) return ymd_(y2, a2, b2);
+        return ymd_(y2, b2, a2);
+      }
+      if(/^\d+$/.test(s)){
+        var n = Number(s);
+        if(n >= 1 && n <= 2958465){                     /* تسلسل Google Sheets */
+          var ds = new Date(Math.round((n - 25569) * 86400000));
+          return ymd_(ds.getUTCFullYear(), ds.getUTCMonth() + 1, ds.getUTCDate());
+        }
+        if(n >= 1e11 && n < 1e14){                     /* ملّي ثانية */
+          var dm = new Date(n);
+          if(!isNaN(dm.getTime())) return ymd_(dm.getFullYear(), dm.getMonth() + 1, dm.getDate());
+        }
+        if(n >= 1e9 && n < 1e11){                      /* ثانية */
+          var dsec = new Date(n * 1000);
+          if(!isNaN(dsec.getTime())) return ymd_(dsec.getFullYear(), dsec.getMonth() + 1, dsec.getDate());
+        }
+        return '';
+      }
+      var t = Date.parse(s);
+      if(!isNaN(t)){
+        var df = new Date(t);
+        return ymd_(df.getFullYear(), df.getMonth() + 1, df.getDate());
+      }
+      return '';
+    }
+
+    function toArDigits(s){
+      return String(s || '').replace(/[0-9]/g, function(c){ return String.fromCharCode(0x0660 + Number(c)); });
+    }
+
+    function arDateLabel(iso){
+      if(!iso) return '—';
+      return toArDigits(iso.replace(/-/g, '/'));
+    }
+
+    function todayIso_(){
+      var t = new Date();
+      return ymd_(t.getFullYear(), t.getMonth() + 1, t.getDate());
+    }
+
+    function updateDateHints(){
+      $('ueSubStartHint').textContent = arDateLabel(toDateInput($('ueSubStart').value));
+      $('ueSubEndHint').textContent = arDateLabel(toDateInput($('ueSubEnd').value));
+    }
+
+    /* ------- اشتراك 0 أيام = منتهٍ + احتساب تاريخ الانتهاء ------- */
+    var autoBlocked = false;      /* الحالة وُقّفت تلقائياً بسبب صفر أيام */
+    var prevStatusVal = 'active';
+
+    function addDaysIso(iso, n){
+      var m = String(iso || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+      if(!m || !isFinite(n)) return '';
+      var d = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]) + Math.floor(n));
+      return ymd_(d.getFullYear(), d.getMonth() + 1, d.getDate());
+    }
+
+    function diffDaysIso(fromIso, toIso){
+      var a = String(fromIso || ''), b = String(toIso || '');
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(a) || !/^\d{4}-\d{2}-\d{2}$/.test(b)) return NaN;
+      var da = new Date(a + 'T00:00:00'), db = new Date(b + 'T00:00:00');
+      return Math.round((db.getTime() - da.getTime()) / 86400000);
+    }
+
+    function updateSubEndFromDays(){
+      var raw = String($('ueSubDays').value || '').trim();
+      var sub = toDateInput($('ueSubStart').value);
+      var n = Number(raw);
+      if(sub && raw !== '' && isFinite(n) && n >= 0){
+        $('ueSubEnd').value = addDaysIso(sub, n);
+      } else if(raw === ''){
+        $('ueSubEnd').value = '';
+      }
+      updateDateHints();
+    }
+
+    function applySubDaysLogic(){
+      var raw = String($('ueSubDays').value || '').trim();
+      var n = Number(raw);
+      var isZero = raw !== '' && isFinite(n) && n === 0;
+      $('ueSubZeroHint').hidden = !isZero;
+      if(isZero){
+        if($('ueStatus').value !== 'blocked'){
+          prevStatusVal = $('ueStatus').value || 'active';
+          autoBlocked = true;
+          $('ueStatus').value = 'blocked';
+        }
+      } else if(autoBlocked){
+        $('ueStatus').value = prevStatusVal;
+        autoBlocked = false;
+      }
+      updateSubEndFromDays();
+    }
+
+    function openEditForm(u){
+      formMode = 'edit';
+      editing = u;
+      $('ueTitle').textContent = 'تعديل بيانات المستخدم';
+      $('ueWho').innerHTML = esc(u.name || 'بدون اسم') + ' — <span dir="ltr" style="unicode-bidi:plaintext;">' + esc(u.phone) + '</span>';
+      $('ueErr').hidden = true;
+      $('uePassLabel').textContent = 'كلمة مرور جديدة';
+      $('uePass').placeholder = 'اتركها فارغة = بدون تغيير';
+      $('uePhonePassHint').hidden = false;
+      $('ueMeta').hidden = false;
+      $('ueRoleArea').hidden = true;
+      clearReqBad();
+      $('ueName').value = String(u.name || '');
+      $('uePhone').value = displayPhone(u.phone);
+      $('uePass').value = '';
+      $('ueStatus').value = (u.status === 'blocked') ? 'blocked' : 'active';
+      $('ueSubDays').value = (u.subDays === null || u.subDays === undefined || String(u.subDays).trim() === '') ? '' : String(u.subDays).trim();
+      var origSub = toDateInput(u.subStart);
+      $('ueSubStart').value = origSub;
+      editing.origSubStart = origSub;
+      $('ueDevice').value = String(u.device === null || u.device === undefined ? '' : u.device).trim();
+      autoBlocked = false;
+      prevStatusVal = $('ueStatus').value || 'active';
+      applySubDaysLogic();
+      updatePhoneHint();
+      $('ueFirst').textContent = String(u.firstLogin || '—');
+      $('ueLast').textContent = String(u.lastLogin || '—');
+      $('ueLogins').textContent = String(u.logins || 0);
+      $('ueSave').disabled = false;
+      $('ueSave').textContent = 'حفظ التعديلات';
+      $('editOverlay').classList.add('open');
+    }
+
+    function closeEditForm(){
+      $('editOverlay').classList.remove('open');
+      editing = null;
+      formMode = 'edit';
+    }
+
+    /* ---------------- إضافة مستخدم جديد (نفس النافذة — وضع الإنشاء) ---------------- */
+    function clearReqBad(){
+      $('ueName').classList.remove('req-bad');
+      $('uePass').classList.remove('req-bad');
+      $('ueSubDays').classList.remove('req-bad');
+    }
+
+    function setUeRole(role){
+      ueRole = role;
+      var btns = $('ueRoles').querySelectorAll('button');
+      for(var i = 0; i < btns.length; i++){
+        btns[i].classList.toggle('active', btns[i].getAttribute('data-role') === role);
+      }
+      $('ueOwnerBox').hidden = role !== 'owner';
+      $('ueAcctBox').hidden = !isAcctTypeRole(role);
+      $('ueAdminBox').hidden = role !== 'admin';
+      var ueLbl = $('ueAcctBox').querySelector('label');
+      if(ueLbl) ueLbl.textContent = isAcctTypeRole(role) ? ('المتجر الذي سينضم إليه كـ«' + roleLabelOf(role) + '»') : 'المتجر الذي سينضم إليه كمحاسب';
+    }
+
+    function openCreateForm(){
+      formMode = 'create';
+      editing = null;
+      $('ueTitle').textContent = 'إضافة مستخدم جديد';
+      $('ueWho').textContent = 'املأ بيانات الحساب والدور ثم أنشئ';
+      $('ueErr').hidden = true;
+      $('uePassLabel').textContent = 'كلمة المرور (إلزامية)';
+      $('uePass').placeholder = '8 أحرف على الأقل';
+      $('uePhonePassHint').hidden = true;
+      $('ueMeta').hidden = true;
+      $('ueRoleArea').hidden = false;
+      clearReqBad();
+      $('ueName').value = '';
+      $('uePhone').value = '';
+      $('uePass').value = '';
+      $('ueStatus').value = 'active';
+      var t = todayIso_();
+      $('ueSubDays').value = '';
+      $('ueSubStart').value = t;
+      $('ueSubEnd').value = '';
+      $('ueDevice').value = '';
+      $('ueStoreName').value = '';
+      ueStoreCombo.setOptions(storeOptionsList());
+    ueStoreCombo.setValue('');
+      setUeRole('none');
+      autoBlocked = false;
+      prevStatusVal = 'active';
+      applySubDaysLogic();
+      updatePhoneHint();
+      $('ueSave').disabled = false;
+      $('ueSave').textContent = 'إنشاء المستخدم';
+      $('editOverlay').classList.add('open');
+    }
+
+    function saveCreate(){
+      var name = String($('ueName').value || '').trim();
+      var phoneVal = String($('uePhone').value || '');
+      var pass = String($('uePass').value || '');
+      var status = $('ueStatus').value;
+      var subDays = String($('ueSubDays').value || '').trim();
+      var subStart = toDateInput($('ueSubStart').value) || todayIso_();
+      var device = String($('ueDevice').value || '').trim();
+
+      clearReqBad();
+      if(name.length < 2){ showUeErr('اكتب اسم المستخدم (حرفان على الأقل)'); $('ueName').classList.add('req-bad'); $('ueName').focus(); return; }
+      if(!validPhoneInput(phoneVal)){ showUeErr('رقم الهاتف: يبدأ بـ 056 أو 059 وطوله 10 أرقام'); updatePhoneHint(); $('uePhone').focus(); return; }
+      if(pass.length < 8){ showUeErr('كلمة المرور 8 أحرف على الأقل — إلزامية للحساب الجديد'); $('uePass').classList.add('req-bad'); $('uePass').focus(); return; }
+      if(subDays === '' || isNaN(Number(subDays)) || Number(subDays) < 0){ showUeErr('اكتب مدة الاشتراك بالأيام (0 = منتهٍ وموقوف)'); $('ueSubDays').classList.add('req-bad'); $('ueSubDays').focus(); return; }
+      if(subStart > todayIso_()){ showUeErr('«بدأ الاشتراك» لا يمكن أن يكون تاريخاً في المستقبل'); $('ueSubStart').focus(); return; }
+      updateSubEndFromDays();
+
+      var payload = {
+        phone: normPhone(phoneVal),
+        name: name,
+        pass: pass,
+        status: status,
+        subDays: subDays,
+        subStart: subStart,
+        device: device,
+        role: ueRole
+      };
+      if(ueRole === 'owner'){
+        var sname = String($('ueStoreName').value || '').trim();
+        if(!sname){ showUeErr('اكتب اسم المتجر'); $('ueStoreName').focus(); return; }
+        payload.storeName = sname;
+      }
+      if(isAcctTypeRole(ueRole)){
+        var sid = ueStoreCombo.getValue();
+        if(!sid){ showUeErr('اختر المتجر الذي سينضم إليه'); return; }
+        payload.storeId = sid;
+      }
+
+      $('ueSave').disabled = true;
+      $('ueSave').textContent = 'جارٍ الإنشاء…';
+      $('ueErr').hidden = true;
+
+      api('admin_create', payload)
+        .then(function(r){
+          if(!r || r.ok !== true){
+            $('ueSave').disabled = false;
+            $('ueSave').textContent = 'إنشاء المستخدم';
+            if(r && (r.error === 'session' || r.error === 'not_admin' || r.error === 'sub_expired')){ closeEditForm(); load(); return; }
+            showUeErr(mapError(r && r.error));
+            return;
+          }
+          USERS = Array.isArray(r.users) ? r.users : [];
+          STORES = Array.isArray(r.stores) ? r.stores : [];
+          render();
+          closeEditForm();
+          toast('تم إنشاء المستخدم ✓');
+        })
+        .catch(function(){
+          $('ueSave').disabled = false;
+          $('ueSave').textContent = 'إنشاء المستخدم';
+          showUeErr(mapError(navigator.onLine === false ? 'timeout' : 'network'));
+        });
+    }
+
+    function showUeErr(msg){
+      var box = $('ueErr');
+      box.textContent = msg || '';
+      box.hidden = !msg;
+    }
+
+    function normPhone(s){
+      return String(s === null || s === undefined ? '' : s).replace(/\D+/g, '').replace(/^00/, '').replace(/^0+/, '');
+    }
+
+    /* رقم الهاتف المعروض: 056xxxxxxxx أو 059xxxxxxxx (10 أرقام) */
+    function displayPhone(p){
+      var raw = String(p === null || p === undefined ? '' : p);
+      var d = normPhone(raw);
+      if(/^5[69]\d{7}$/.test(d)) return '0' + d;
+      return raw;
+    }
+
+    function validPhoneInput(v){
+      return /^05[69]\d{7}$/.test(String(v || ''));
+    }
+
+    function phoneState(v){
+      v = String(v || '');
+      if(!v) return 'empty';
+      if(v === '0' || v === '05') return 'short';
+      if(/^05[69]\d{0,7}$/.test(v)) return v.length === 10 ? 'ok' : 'short';
+      return 'bad';
+    }
+
+    function updatePhoneHint(){
+      var v = String($('uePhone').value || '');
+      var st = phoneState(v);
+      var input = $('uePhone'), h = $('uePhoneHint');
+      input.classList.toggle('ph-bad', st === 'bad');
+      input.classList.toggle('ph-ok', st === 'ok');
+      h.className = 'hint' + (st === 'bad' ? ' ph-bad' : st === 'ok' ? ' ph-ok' : '');
+      h.textContent = st === 'ok' ? '✓ صالح — 10 أرقام تبدأ بـ 056 أو 059'
+        : st === 'bad' ? '✗ يجب أن يبدأ بـ 056 أو 059 وطوله 10 أرقام'
+        : 'أدخل 10 أرقام تبدأ بـ 056 أو 059';
+    }
+
+    function saveEdit(){
+      if(!editing) return;
+      var oldPhone = normPhone(editing.phone);
+      var phone = normPhone($('uePhone').value);
+      var pass = String($('uePass').value || '');
+      var name = String($('ueName').value || '').trim();
+      var status = $('ueStatus').value;
+      var subDays = String($('ueSubDays').value || '').trim();
+      var subStart = toDateInput($('ueSubStart').value);
+      var device = String($('ueDevice').value || '').trim();
+
+      var phoneChanged = phone !== oldPhone;
+      if(phoneChanged && !validPhoneInput($('uePhone').value)){
+        showUeErr('رقم الهاتف يجب أن يبدأ بـ 056 أو 059 وطوله 10 أرقام');
+        $('uePhone').focus(); return;
+      }
+      if(pass && pass.length < 8){ showUeErr('كلمة المرور 8 أحرف على الأقل'); $('uePass').focus(); return; }
+      if(phoneChanged && !pass){
+        showUeErr('تغيير الرقم يستلزم كلمة مرور جديدة (الملح مشتقّ من الرقم)');
+        $('uePass').focus(); return;
+      }
+      if(subDays !== '' && (isNaN(Number(subDays)) || Number(subDays) < 0)){ showUeErr('الاشتراك (أيام) يجب أن يكون صفر أو أكثر'); $('ueSubDays').focus(); return; }
+      var today = todayIso_();
+      if(subStart && subStart > today){ showUeErr('«بدأ الاشتراك» لا يمكن أن يكون تاريخاً في المستقبل'); $('ueSubStart').focus(); return; }
+      updateSubEndFromDays();
+      var endCheck = (subStart && subDays !== '' && isFinite(Number(subDays))) ? toDateInput($('ueSubEnd').value) : '';
+      if(endCheck && endCheck < subStart){ showUeErr('«تاريخ انتهاء الاشتراك» قبل «بدأ الاشتراك»'); $('ueSubEnd').focus(); return; }
+
+      var payload = {
+        target: oldPhone,
+        name: name,
+        status: status,
+        newDevice: device
+      };
+      if(phoneChanged) payload.newPhone = phone;
+      if(pass) payload.pass = pass;
+      if(subDays !== '') payload.subDays = subDays;
+      if(subStart && subStart !== (editing.origSubStart || '')) payload.subStart = subStart;
+
+      $('ueSave').disabled = true;
+      $('ueSave').textContent = 'جارٍ الحفظ…';
+      $('ueErr').hidden = true;
+
+      api('admin_update', payload)
+        .then(function(r){
+          if(!r || r.ok !== true){
+            $('ueSave').disabled = false;
+            $('ueSave').textContent = 'حفظ التعديلات';
+            if(r && (r.error === 'session' || r.error === 'not_admin' || r.error === 'sub_expired')){ closeEditForm(); load(); return; }
+            showUeErr(mapError(r && r.error));
+            return;
+          }
+          USERS = Array.isArray(r.users) ? r.users : [];
+          STORES = Array.isArray(r.stores) ? r.stores : [];
+          render();
+          closeEditForm();
+          toast('تم حفظ تعديلات المستخدم ✓');
+        })
+        .catch(function(){
+          $('ueSave').disabled = false;
+          $('ueSave').textContent = 'حفظ التعديلات';
+          showUeErr(mapError(navigator.onLine === false ? 'timeout' : 'network'));
+        });
+    }
+
+    /* ---------------- نافذة محاسبين المتجر (👥) ---------------- */
+    function openMembers(u){
+      editing = u;
+      $('mbWho').innerHTML = 'متجر <b class="store-name">' + esc(u.storeName || 'بدون اسم') + '</b> — مالكه: ' +
+        esc((ownerNameOf(u.storeOwner) || u.storeOwner || ''));
+      var codeEl = $('mbCode');
+      if(u.storeCode){ codeEl.textContent = u.storeCode; codeEl.hidden = false; }
+      else { codeEl.hidden = true; }
+
+      var list = [];
+      for(var i = 0; i < USERS.length; i++){
+        var x = USERS[i];
+        if(x.store !== u.store) continue;
+        if(!isAcctTypeRole(storeRoleOf(x))) continue;
+        list.push(x);
+      }
+      var html = '';
+      if(!list.length){
+        html = '<div class="empty">لا يوجد محاسبون بعد في هذا المتجر</div>';
+      }else{
+        for(var j = 0; j < list.length; j++){
+          var m = list[j];
+          var stChip = (m.status === 'blocked')
+            ? '<span class="chip chip-bad">موقوف</span>'
+            : '<span class="chip chip-ok">نشط</span>';
+          var subChip = m.subActive
+            ? '<span class="chip chip-ok">' + esc(m.subLeft) + ' يوم</span>'
+            : '<span class="chip chip-bad">اشتراك منتهي</span>';
+          var rl = roleLabelOf(storeRoleOf(m));
+          var roleChipHtml = rl ? '<span class="chip chip-acct">' + rl + '</span>' : '';
+          html += '<div class="member">' +
+            '<div class="member-main"><strong>' + esc(m.name || 'بدون اسم') + '</strong>' +
+            '<span>' + esc(m.phone) + '</span></div>' +
+            '<div class="member-side">' + roleChipHtml + subChip + stChip + '</div>' +
+          '</div>';
+        }
+      }
+      $('mbList').innerHTML = html;
+      $('membersOverlay').classList.add('open');
+    }
+
+    function ownerNameOf(phone){
+      var p = String(phone || '');
+      for(var i = 0; i < USERS.length; i++) if(USERS[i].phone === p) return USERS[i].name || '';
+      return '';
+    }
+
+    function closeMembers(){
+      $('membersOverlay').classList.remove('open');
+    }
+
+    /* ---------------- الأحداث ---------------- */
+    $('tbody').addEventListener('click', function(e){
+      var btn = e.target.closest ? e.target.closest('[data-act][data-i]') : null;
+      if(!btn) return;
+      var idx = Number(btn.getAttribute('data-i'));
+      var act = btn.getAttribute('data-act');
+      var rows = USERS.filter(matches);
+      var u = rows[idx];
+      if(!u) return;
+      if(act === 'edit') openEditForm(u);
+      else if(act === 'members') openMembers(u);
+      else openEditor(u);
+    });
+
+    $('edRoles').addEventListener('click', function(e){
+      var b = e.target.closest ? e.target.closest('button[data-role]') : null;
+      if(!b) return;
+      setEditRole(b.getAttribute('data-role'));
+    });
+
+    $('edSave').addEventListener('click', saveAssign);
+    $('edCancel').addEventListener('click', closeEditor);
+    $('editorOverlay').addEventListener('click', function(e){ if(e.target === $('editorOverlay')) closeEditor(); });
+
+    $('ueSave').addEventListener('click', function(){
+      if(formMode === 'create') saveCreate(); else saveEdit();
+    });
+    $('addUserBtn').addEventListener('click', openCreateForm);
+    $('ueRoles').addEventListener('click', function(e){
+      var b = e.target.closest ? e.target.closest('button[data-role]') : null;
+      if(!b) return;
+      setUeRole(b.getAttribute('data-role'));
+    });
+    $('ueName').addEventListener('input', function(){ this.classList.remove('req-bad'); });
+    $('uePass').addEventListener('input', function(){ this.classList.remove('req-bad'); });
+    $('uePhone').addEventListener('input', function(){
+      var v = String(this.value || '').replace(/\D+/g, '').slice(0, 10);
+      if(this.value !== v) this.value = v;
+      updatePhoneHint();
+    });
+    $('ueSubStart').addEventListener('input', function(){ updateSubEndFromDays(); });
+    $('ueSubDays').addEventListener('input', function(){ this.classList.remove('req-bad'); applySubDaysLogic(); });
+    $('ueSubEnd').addEventListener('input', function(){
+      updateDateHints();
+      var end = toDateInput(this.value);
+      var sub = toDateInput($('ueSubStart').value);
+      if(!end || !sub) return;
+      var n = diffDaysIso(sub, end);
+      if(isNaN(n) || n < 0){ showUeErr('«تاريخ انتهاء الاشتراك» قبل «بدأ الاشتراك»'); return; }
+      showUeErr('');
+      $('ueSubDays').value = String(n);
+      $('ueSubDays').classList.remove('req-bad');
+      applySubDaysLogic();
+    });
+    $('ueStatus').addEventListener('change', function(){
+      if(this.value !== 'blocked') autoBlocked = false;
+    });
+    $('ueCancel').addEventListener('click', closeEditForm);
+    $('editOverlay').addEventListener('click', function(e){ if(e.target === $('editOverlay')) closeEditForm(); });
+
+    $('mbClose').addEventListener('click', closeMembers);
+    $('membersOverlay').addEventListener('click', function(e){ if(e.target === $('membersOverlay')) closeMembers(); });
+
+    /* أيقونات إغلاق (×) داخل النوافذ المنسدلة */
+    $('edX').addEventListener('click', closeEditor);
+    $('ueX').addEventListener('click', closeEditForm);
+    $('mbX').addEventListener('click', closeMembers);
+
+    /* سحب النافذة المنسدلة للأسفل لإغلاقها (سواب) */
+    function enableSwipeClose(overlayId, closeFn){
+      var overlay = document.getElementById(overlayId);
+      if(!overlay) return;
+      var sheet = overlay.querySelector('.sheet');
+      if(!sheet) return;
+      var startY = 0, startX = 0, dy = 0, dragging = false, active = false;
+
+      sheet.addEventListener('touchstart', function(e){
+        /* نبدأ السحب فقط عندما تكون النافذة في أعلى تمريرها (حتى لا نتعارض مع التمرير) */
+        if(sheet.scrollTop > 0){ active = false; return; }
+        var t = e.touches[0];
+        if(!t) return;
+        startY = t.clientY; startX = t.clientX; dy = 0; dragging = false; active = true;
+      }, { passive: true });
+
+      sheet.addEventListener('touchmove', function(e){
+        if(!active) return;
+        var t = e.touches[0];
+        if(!t){ active = false; return; }
+        dy = t.clientY - startY;
+        var dx = t.clientX - startX;
+        if(!dragging){
+          if(Math.abs(dy) < 6 && Math.abs(dx) < 6) return;
+          /* نتفاعل فقط مع السحب للأسفل، وليس مع السحب الأفقي أو للأعلى */
+          if(dy <= 0 || Math.abs(dx) > Math.abs(dy)){ active = false; return; }
+          dragging = true;
+          sheet.classList.add('dragging');
+        }
+        if(dy < 0) dy = 0;
+        sheet.style.transform = 'translateY(' + dy + 'px)';
+        if(e.cancelable) e.preventDefault();
+      }, { passive: false });
+
+      function endSwipe(){
+        sheet.classList.remove('dragging');
+        if(!dragging){ active = false; dy = 0; return; }
+        var h = sheet.getBoundingClientRect().height || 400;
+        var threshold = Math.min(h * 0.33, 160);
+        sheet.style.transform = '';
+        if(dy > threshold){
+          if(typeof closeFn === 'function') closeFn();
+          else overlay.classList.remove('open');
+        }
+        active = false; dragging = false; dy = 0;
+      }
+      sheet.addEventListener('touchend', endSwipe);
+      sheet.addEventListener('touchcancel', endSwipe);
+    }
+
+    enableSwipeClose('editorOverlay', closeEditor);
+    enableSwipeClose('editOverlay', closeEditForm);
+    enableSwipeClose('membersOverlay', closeMembers);
+
+    $('searchInput').addEventListener('input', function(){
+      QUERY = String(this.value || '').trim();
+      render();
+    });
+
+    $('filterSeg').addEventListener('click', function(e){
+      var b = e.target.closest ? e.target.closest('button[data-f]') : null;
+      if(!b) return;
+      FILTER = b.getAttribute('data-f');
+      var all = $('filterSeg').querySelectorAll('button');
+      for(var i = 0; i < all.length; i++) all[i].classList.toggle('active', all[i] === b);
+      render();
+    });
+
+    $('refreshBtn').addEventListener('click', load);
+    $('logoutBtn').addEventListener('click', function(){ DTAuth.logout(''); });
+
+    window.addEventListener('storage', function(e){
+      if(e.key !== null && e.key !== 'invoiceapp_auth') return;
+      var a = DTAuth.readAuth();
+      if(!a || !DTAuth.sessionValid(a) || !isAdminAuth(a)) leaveToLogin('nosession');
+    });
+
+    /* ---------------- التشغيل ---------------- */
+    function boot(){
+      if(!DTAuth.isConfigured()){
+        gate('لم يتم إعداد رابط الخادم بعد — أضف رابط Apps Script في ملف auth.js');
+        return;
+      }
+      showWho();
+      ungated();
+      load();
+      setInterval(function(){
+        var a = DTAuth.readAuth();
+        if(!a || !DTAuth.sessionValid(a)){ leaveToLogin('session'); return; }
+        if(!isAdminAuth(a)){ leaveToLogin(''); return; }
+        if(document.hidden) return;
+        load();
+      }, 60000);
+    }
+
+    if(ensureAdmin()) boot();
+  })();
+  </script>
+</body>
+</html>

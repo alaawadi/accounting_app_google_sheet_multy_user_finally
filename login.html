@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, viewport-fit=cover">
+  <title>دفتر التاجر — تسجيل الدخول</title>
+  <meta name="description" content="تسجيل الدخول إلى تطبيق دفتر التاجر برقم الهاتف وكلمة المرور">
+  <meta name="theme-color" content="#101A24">
+  <link rel="manifest" href="./manifest.json">
+  <link rel="icon" type="image/png" sizes="32x32" href="./icons/favicon-32.png">
+  <link rel="shortcut icon" href="./icons/favicon.ico">
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="format-detection" content="telephone=no">
+
+  <style>
+    @font-face{
+      font-family:'CairoHeader';
+      font-style:normal;
+      font-weight:200 1000;
+      font-display:swap;
+      src:url('./fonts/Cairo-arabic.woff2') format('woff2');
+      unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0897-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC,U+102E0-102FB,U+10E60-10E7E,U+10EC2-10EC4,U+10EFC-10EFF,U+1EE00-1EE03,U+1EE05-1EE1F,U+1EE21-1EE22,U+1EE24,U+1EE27,U+1EE29-1EE32,U+1EE34-1EE37,U+1EE39,U+1EE3B,U+1EE42,U+1EE47,U+1EE49,U+1EE4B,U+1EE4D-1EE4F,U+1EE51-1EE52,U+1EE54,U+1EE57,U+1EE59,U+1EE5B,U+1EE5D,U+1EE5F,U+1EE61-1EE62,U+1EE64,U+1EE67-1EE6A,U+1EE6C-1EE72,U+1EE74-1EE77,U+1EE79-1EE7C,U+1EE7E,U+1EE80-1EE89,U+1EE8B-1EE9B,U+1EEA1-1EEA3,U+1EEA5-1EEA9,U+1EEAB-1EEBB,U+1EEF0-1EEF1;
+    }
+    @font-face{
+      font-family:'CairoHeader';
+      font-style:normal;
+      font-weight:200 1000;
+      font-display:swap;
+      src:url('./fonts/Cairo-latin.woff2') format('woff2');
+      unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+    :root{
+      --ink:#182229;
+      --ink-soft:#3d4a54;
+      --muted:#736b5c;
+      --paper:#F7F3EA;
+      --card:#FFFFFF;
+      --line:#E6DFCF;
+      --accent:#F28C0F;
+      --accent-deep:#C96F00;
+      --accent-soft:#FDE7C7;
+      --teal:#0F6B67;
+      --teal-soft:#DCEEEC;
+      --navy:#101A24;
+      --navy-2:#1B2A38;
+      --success:#1E8E5A;
+      --success-soft:#DCF3E7;
+      --danger:#D6473F;
+      --danger-soft:#FBE1DF;
+      --radius:16px;
+      --shadow:0 6px 20px rgba(16,26,36,0.10);
+    }
+    *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+    html,body{margin:0; padding:0; min-height:100%;}
+    body{
+      font-family:'Tajawal','Segoe UI',Tahoma,Geneva,Arial,sans-serif;
+      background:var(--paper);
+      color:var(--ink);
+      min-height:100vh;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding:24px 16px calc(24px + env(safe-area-inset-bottom));
+      -webkit-user-select:none; user-select:none;
+    }
+    input{-webkit-user-select:text; user-select:text;}
+    h1,h2,.display{font-family:'Cairo','Segoe UI',Tahoma,Geneva,Arial,sans-serif;}
+
+    .auth-shell{width:100%; max-width:420px; margin:auto; display:flex; flex-direction:column; gap:16px;}
+    .auth-card{
+      background:var(--card); border:1px solid var(--line); border-radius:22px;
+      padding:26px 20px 22px; box-shadow:var(--shadow);
+    }
+    .auth-brand{display:flex; flex-direction:column; align-items:center; gap:10px; margin-bottom:18px; text-align:center;}
+    .auth-brand h1{font-size:23px; font-weight:800; margin:0; color:var(--navy); letter-spacing:.2px;}
+    .auth-brand p{margin:0; font-size:13px; color:var(--muted); font-weight:600;}
+
+    .auth-notice{
+      transition:opacity .32s ease;
+      display:flex; flex-wrap:wrap; gap:8px; align-items:center;
+      background:var(--accent-soft); border:1px solid #F3D6A6; color:#7A4A00;
+      border-radius:12px; padding:10px 12px; font-size:13px; font-weight:600; line-height:1.6;
+      margin-bottom:14px;
+    }
+    .auth-notice.info{background:var(--teal-soft); border-color:#BEE1DD; color:#0B4D48;}
+    .auth-notice[hidden]{display:none;}
+    .auth-notice a{
+      color:inherit; font-weight:800; text-decoration:underline; white-space:nowrap;
+      font-family:'Cairo','Segoe UI',Tahoma,sans-serif;
+    }
+
+    .auth-error{
+      background:var(--danger-soft); border:1px solid #F1C4C0; color:#8b2525;
+      border-radius:12px; padding:10px 12px; font-size:13px; font-weight:700; line-height:1.6;
+      margin-bottom:14px;
+    }
+    .auth-error[hidden]{display:none;}
+
+    .field{margin-bottom:14px; text-align:right;}
+    .field label{
+      display:block; font-size:13px; font-weight:700; color:var(--ink-soft); margin-bottom:7px;
+    }
+    .field input{
+      width:100%; padding:13px 14px; font-size:16px; font-weight:600;
+      background:#FCFAF5; border:1.6px solid var(--line); border-radius:13px; color:var(--ink);
+      outline:none; transition:border-color .15s ease, box-shadow .15s ease;
+    }
+    .field input:focus{border-color:var(--teal); box-shadow:0 0 0 3px rgba(15,107,103,.14); background:#fff;}
+    .field input::placeholder{color:#A79E8C; font-weight:500;}
+    .field input[dir="ltr"]{text-align:right; letter-spacing:.4px;}
+    .field-hint{margin:7px 0 0; font-size:12px; font-weight:700; line-height:1.5; color:var(--muted); text-align:right;}
+    .field-hint[hidden]{display:none;}
+    .field-hint.warn{color:#8b2525;}
+    .field-hint.muted-hint{color:var(--muted); font-weight:600;}
+    .field-hint.ok{color:var(--success);}
+    .field.phone-bad input{border-color:var(--danger); box-shadow:0 0 0 3px rgba(214,71,63,.12); background:#FFF9F8;}
+    .field.phone-ok input{border-color:var(--success); box-shadow:0 0 0 3px rgba(30,142,90,.12); background:#F7FDF9;}
+
+    .pw-wrap{position:relative;}
+    .pw-wrap input{padding-left:52px;}
+    .pw-toggle{
+      position:absolute; left:6px; top:50%; transform:translateY(-50%);
+      width:40px; height:40px; border:0; background:transparent; color:var(--muted);
+      display:flex; align-items:center; justify-content:center; border-radius:10px;
+    }
+    .pw-toggle:active{background:rgba(15,107,103,.10);}
+
+    .auth-btn{
+      width:100%; margin-top:6px; padding:14px 16px; border:0; border-radius:14px;
+      background:linear-gradient(120deg, var(--navy) 0%, var(--navy-2) 55%, #0E4640 100%);
+      color:#fff; font-size:16.5px; font-weight:800; font-family:'Cairo','Segoe UI',Tahoma,sans-serif;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      box-shadow:0 8px 18px rgba(16,26,36,.22); transition:transform .1s ease, opacity .15s ease;
+    }
+    .auth-btn:active{transform:translateY(1px);}
+    .auth-btn[disabled]{opacity:.72; cursor:default;}
+    .wa-signup{
+      width:100%; margin-top:12px; padding:14px 16px; border-radius:14px;
+      background:#25D366; color:#fff; text-decoration:none; font-size:16px; font-weight:800;
+      font-family:'Cairo','Segoe UI',Tahoma,sans-serif;
+      display:flex; align-items:center; justify-content:center; gap:10px;
+      box-shadow:0 8px 18px rgba(37,214,102,.30); transition:transform .1s ease, background .15s ease;
+    }
+    .wa-signup:active{transform:translateY(1px); background:#1FB958;}
+
+    .spinner{
+      width:18px; height:18px; border-radius:50%;
+      border:2.5px solid rgba(255,255,255,.35); border-top-color:#fff;
+      animation:spin .8s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg);}}
+
+    .auth-foot{
+      margin:16px 0 0; text-align:center; font-size:12.5px; color:var(--muted); font-weight:600; line-height:1.8;
+    }
+    .auth-foot b{color:var(--accent-deep);}
+    .wa-foot{display:flex; align-items:center; justify-content:center; gap:7px; flex-wrap:wrap; color:var(--muted);}
+    .wa-foot svg{color:#25D366; flex:0 0 auto;}
+    .wa-num{color:#25D366; font-weight:800; text-decoration:none; direction:ltr; unicode-bidi:embed;}
+    .wa-num:active{text-decoration:underline;}
+
+    .auth-brand svg{filter:drop-shadow(0 6px 14px rgba(11,77,72,.28));}
+  </style>
+</head>
+<body>
+  <div class="auth-shell">
+
+    <div class="auth-card">
+      <div class="auth-brand">
+        <svg width="64" height="64" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="lg1" x1="0" y1="0" x2="40" y2="40" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#17A79C"></stop><stop offset="1" stop-color="#0B4D48"></stop>
+            </linearGradient>
+            <linearGradient id="lg2" x1="22" y1="22" x2="33" y2="33" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#F6A93B"></stop><stop offset="1" stop-color="#C96F00"></stop>
+            </linearGradient>
+          </defs>
+          <rect width="40" height="40" rx="12" fill="url(#lg1)"></rect>
+          <path d="M11 9a2 2 0 0 1 2-2h9.5L26 10.5V31a2 2 0 0 1-2 2H13a2 2 0 0 1-2-2V9Z" fill="#fff" opacity="0.97"></path>
+          <path d="M22.5 7v3.2a1 1 0 0 0 1 1H26" stroke="#0B4D48" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" opacity="0.5"></path>
+          <rect x="14.3" y="15.2" width="8.4" height="1.7" rx="0.85" fill="#0F6B67"></rect>
+          <rect x="14.3" y="19.2" width="8.4" height="1.7" rx="0.85" fill="#0F6B67" opacity="0.55"></rect>
+          <rect x="14.3" y="23.2" width="5.6" height="1.7" rx="0.85" fill="#0F6B67"></rect>
+          <circle cx="28.5" cy="28.5" r="7.5" fill="url(#lg2)" stroke="#0B4D48" stroke-width="1.6"></circle>
+          <path d="M25.3 28.7 27.6 31l4-4.4" stroke="#fff" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"></path>
+        </svg>
+        <h1>دفتر التاجر</h1>
+        <p>سجّل الدخول برقم الهاتف وكلمة المرور للمتابعة</p>
+      </div>
+
+      <div class="auth-notice" id="notice" hidden></div>
+      <div class="auth-error" id="errorBox" hidden></div>
+
+      <form id="loginForm" novalidate>
+        <div class="field">
+          <label for="phone">رقم الهاتف</label>
+          <input id="phone" name="phone" type="tel" inputmode="numeric" autocomplete="username"
+                 placeholder="059xxxxxxx" dir="ltr" maxlength="10" required>
+          <p class="field-hint" id="phoneHint" hidden></p>
+        </div>
+
+        <div class="field">
+          <label for="password">كلمة المرور</label>
+          <div class="pw-wrap">
+            <input id="password" name="password" type="password" autocomplete="current-password"
+                   placeholder="••••••••" dir="ltr" maxlength="64" required>
+            <button type="button" class="pw-toggle" id="pwToggle" aria-label="إظهار كلمة المرور">
+              <svg id="eyeIcon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="auth-btn" id="submitBtn">
+          <span id="btnLabel">تسجيل الدخول</span>
+        </button>
+      </form>
+      <a class="wa-signup" href="https://wa.me/972594810786?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%20%D8%B4%D8%B1%D9%83%D8%A9%20%D8%AF%D8%A7%D8%AA%D8%A7%20%D8%A7%D8%B1%D8%BA%D8%A8%20%D9%81%D9%8A%20%D8%A7%D9%84%D8%A7%D8%B4%D8%AA%D8%B1%D8%A7%D9%83%20%D9%81%D9%8A%20%D8%AA%D8%B7%D8%A8%D9%8A%D9%82%20%D8%AF%D9%81%D8%AA%D8%B1%20%D8%A7%D9%84%D8%AA%D8%A7%D8%AC%D8%B1" target="_blank" rel="noopener" aria-label="إنشاء حساب جديد عبر واتساب">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1s-.5-.1-.7.1-.7.9-.9 1.1-.4.2-.7.1a6.6 6.6 0 0 1-3.4-3c-.3-.5.3-.4.7-1.4.1-.2 0-.4 0-.5l-.7-1.7c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-1 1-.9 2.4.1 3.7 1.6 2.4 3.4 3.5 5.6 4.2.8.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4s-.2-.2-.4-.3ZM12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.3A10 10 0 1 0 12 2Z"></path></svg>
+        <span>إنشاء حساب جديد</span>
+      </a>
+
+      <p class="auth-foot wa-foot">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M17.5 14.4c-.3-.2-1.8-.9-2-1s-.5-.1-.7.1-.7.9-.9 1.1-.4.2-.7.1a6.6 6.6 0 0 1-3.4-3c-.3-.5.3-.4.7-1.4.1-.2 0-.4 0-.5l-.7-1.7c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-1 1-.9 2.4.1 3.7 1.6 2.4 3.4 3.5 5.6 4.2.8.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4s-.2-.2-.4-.3ZM12 2a10 10 0 0 0-8.5 15.2L2 22l4.9-1.3A10 10 0 1 0 12 2Z"></path></svg>
+        <span>تواصل معنا على واتساب لتفعيل اشتراكك</span>
+        <a class="wa-num" href="https://wa.me/972594810786" target="_blank" rel="noopener" dir="ltr">+972594810786</a>
+      </p>
+    </div>
+
+  </div>
+
+  <script src="./auth.js"></script>
+  <script>
+  (function(){
+    'use strict';
+
+    var form = document.getElementById('loginForm');
+    var phoneEl = document.getElementById('phone');
+    var phoneHint = document.getElementById('phoneHint');
+    var passEl = document.getElementById('password');
+    var pwToggle = document.getElementById('pwToggle');
+    var eyeIcon = document.getElementById('eyeIcon');
+    var errorBox = document.getElementById('errorBox');
+    var notice = document.getElementById('notice');
+    var noticeHideTimer = null;
+    var submitBtn = document.getElementById('submitBtn');
+    var btnLabel = document.getElementById('btnLabel');
+
+    var submitting = false;
+    /* رقم الهاتف: أرقام فقط وحد أقصى 10 خانات (يمنع أيضاً لصق رقم أطول) */
+    phoneEl.addEventListener('input', function(){
+      var d = phoneEl.value.replace(/\D+/g, '').slice(0, 10);
+      if(d !== phoneEl.value) phoneEl.value = d;
+      updatePhoneHint();
+    });
+    /* تنبيه فوري للمقدمة 056/059 والطول (10 أرقام) */
+    function updatePhoneHint(){
+      var digits = phoneEl.value.replace(/\D+/g, '');
+      var field = phoneEl.closest('.field');
+      phoneHint.className = 'field-hint';
+      phoneHint.hidden = true;
+      if(field){ field.classList.remove('phone-bad'); field.classList.remove('phone-ok'); }
+      if(!digits) return;
+      var validPrefixes = ['056', '059'];
+      var head = digits.slice(0, 3);
+      var prefixOk = validPrefixes.some(function(x){ return x.indexOf(head) === 0; });
+      if(!prefixOk){
+        phoneHint.textContent = 'المقدمة يجب أن تكون 056 أو 059 فقط';
+        phoneHint.classList.add('warn');
+        phoneHint.hidden = false;
+        if(field) field.classList.add('phone-bad');
+        return;
+      }
+      if(digits.length < 3){
+        phoneHint.textContent = 'يبدأ الرقم بـ 056 أو 059';
+        phoneHint.classList.add('muted-hint');
+        phoneHint.hidden = false;
+        return;
+      }
+      if(digits.length < 10){
+        phoneHint.textContent = 'أدخل ' + (10 - digits.length) + ' أرقام متبقية';
+        phoneHint.classList.add('muted-hint');
+        phoneHint.hidden = false;
+        return;
+      }
+      phoneHint.textContent = '✓ رقم صحيح';
+      phoneHint.classList.add('ok');
+      phoneHint.hidden = false;
+      if(field) field.classList.add('phone-ok');
+    }
+
+    /* ---------- رسائل حسب سبب الوصول للصفحة ---------- */
+    /* النص الموحّد لكل حالات انقضاء الاشتراك (يُستعمل في 3 مواضع) — التفصيل في console */
+    var SUB_ENDED_TEXT = 'انتهت مدة اشتراكك، تواصل معنا على واتساب لتجديد اشتراكك';
+    var REASON_TEXT = {
+      expired:   { cls:'',        text:'يلزم تسجيل الدخول للمتابعة.' },
+      blocked:   { cls:'',        text:'تم إيقاف هذا الحساب. تواصل مع المطوّر للمتابعة.' },
+      member_disabled: { cls:'',  text:'تم تعطيل حسابك من صاحب المتجر. تواصل معه لإعادة تفعيله.' },
+      other_device: { cls:'',     text:'هذا الحساب مرتبط بجهاز آخر. تواصل مع المطوّر لربطه بجهازك.' },
+      sub_expired: { cls:'',      text: SUB_ENDED_TEXT },
+      session:  { cls:'info',    text:'انتهت مدة جلسة تسجيل الدخول (30 يوماً) — سجّل الدخول مرة أخرى للمتابعة.' },
+      nosession: { cls:'info',    text:'أهلاً بك — سجّل الدخول للمتابعة.' },
+      logout:    { cls:'info',    text:'تم تسجيل خروجك بنجاح.' }
+    };
+    function showNotice(){
+      var reason = '';
+      try{ reason = new URLSearchParams(location.search).get('reason') || ''; }catch(e){}
+      var info = REASON_TEXT[reason];
+      if(info){
+        notice.className = 'auth-notice' + (info.cls ? ' ' + info.cls : '');
+        notice.textContent = info.text;
+        notice.hidden = false;
+        if(reason === 'logout'){
+          clearTimeout(noticeHideTimer);
+          noticeHideTimer = setTimeout(function(){
+            notice.style.opacity = '0';
+            setTimeout(function(){ notice.hidden = true; notice.style.opacity = ''; }, 320);
+          }, 3000);
+        }
+      }
+    }
+
+    function showError(msg){
+      errorBox.textContent = msg || '';
+      errorBox.hidden = !msg;
+    }
+
+    /* ---------- إخفاء/إظهار كلمة المرور ---------- */
+    var eyeOpen = '<path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle>';
+    var eyeOff  = '<path d="M3 3l18 18M10.6 10.7a3 3 0 0 0 4.2 4.2M9.9 5.2A9.7 9.7 0 0 1 12 5c6.4 0 10 7 10 7a17.6 17.6 0 0 1-3.4 4.3M6.6 6.7A17.7 17.7 0 0 0 2 12s3.6 7 10 7c1.3 0 2.5-.3 3.6-.7"></path>';
+    pwToggle.addEventListener('click', function(){
+      var show = passEl.type === 'password';
+      passEl.type = show ? 'text' : 'password';
+      eyeIcon.innerHTML = show ? eyeOff : eyeOpen;
+      pwToggle.setAttribute('aria-label', show ? 'إخفاء كلمة المرور' : 'إظهار كلمة المرور');
+      passEl.focus();
+    });
+
+    /* ---------- حالة الدخول الحالي ---------- */
+    function alreadyLoggedIn(){
+      var auth = DTAuth.readAuth();
+      return !!DTAuth.sessionValid(auth);
+    }
+
+    function setBusy(busy){
+      submitting = busy;
+      submitBtn.disabled = busy;
+      btnLabel.textContent = busy ? 'جارٍ التحقق...' : 'تسجيل الدخول';
+      var old = submitBtn.querySelector('.spinner');
+      if(busy && !old){
+        var sp = document.createElement('span');
+        sp.className = 'spinner';
+        submitBtn.insertBefore(sp, btnLabel);
+      }else if(!busy && old){
+        old.remove();
+      }
+    }
+
+    /* الدخول: الأدمن يذهب إلى لوحة الداشبورد تلقائياً، والبقية إلى التطبيق.
+       الجلسات القديمة بلا حقل «role» نسأل الخادم مرة واحدة لنعرف هل هو أدمن. */
+    function goByRole(role){
+      var url = (role === 'admin') ? './dashboard.html' : './index.html#history';
+      try{ location.replace(url); }
+      catch(e){ location.href = url; }
+    }
+
+    function toApp(){
+      var auth = DTAuth.readAuth();
+      if(auth && DTAuth.sessionValid(auth) && !auth.role){
+        DTAuth.callApi('verify', { phone: auth.phone, token: auth.token })
+          .then(function(r){
+            if(r && r.ok === true){
+              var fresh = DTAuth.readAuth();
+              if(fresh){ fresh.role = r.role || ''; DTAuth.writeAuth(fresh); }
+              goByRole(r.role || '');
+            }else{
+              if(r && r.error === 'member_disabled'){ DTAuth.logout('member_disabled'); return; }
+              goByRole('');
+            }
+          })
+          .catch(function(){ goByRole(''); });
+        return;
+      }
+      goByRole((auth && auth.role) || '');
+    }
+
+    form.addEventListener('submit', function(e){
+      e.preventDefault();
+      if(submitting) return;
+      showError('');
+
+      var phoneRaw = phoneEl.value;
+      var pass = passEl.value;
+
+      if(!DTAuth.isConfigured()){
+        showError('لم يتم إعداد رابط الخادم بعد: افتح ملف auth.js وضع رابط Apps Script في GAS_URL.');
+        return;
+      }
+      var phoneDigits = String(phoneRaw).replace(/\D+/g, '');
+      if(phoneDigits.length > 10){
+        showError('رقم الهاتف لا يزيد عن 10 أرقام.');
+        phoneEl.focus();
+        return;
+      }
+      if(!/^(059|056)\d{7}$/.test(phoneDigits)){
+        showError('رقم الهاتف يبدأ بـ 059 أو 056 ويتكوّن من 10 أرقام.');
+        phoneEl.focus();
+        return;
+      }
+      if(!pass || pass.length < 4){
+        showError('أدخل كلمة المرور (4 أحرف على الأقل).');
+        passEl.focus();
+        return;
+      }
+
+      if(typeof navigator !== 'undefined' && navigator.onLine === false){
+        showError('لا يوجد اتصال بالإنترنت — تحقّق من الشبكة ثم أعد المحاولة.');
+        return;
+      }
+
+      setBusy(true);
+      DTAuth.callApi('login', { phone: phoneRaw, pass: pass })
+        .then(function(res){
+          setBusy(false);
+          if(!res || res.ok !== true){
+            showError(mapServerError(res));
+            return;
+          }
+          /* لا دخول بلا تاريخ نهاية اشتراك: رسالة موجزة للمستخدم، والتفصيل في سجل المطوّر */
+          if(!(Number(res.subEnd) > 0)){
+            try{ console.warn('[اشتراك] لم يُرسل الخادم subEnd — راجع خانة «الاشتراك_أيام»/«بدأ_الاشتراك» أو نسخة النشر في Apps Script', res); }catch(e){}
+            showError(SUB_ENDED_TEXT);
+            return;
+          }
+          var auth = {
+            phone: res.phone || DTAuth.normalizePhone(phoneRaw),
+            name: res.name || '',
+            role: res.role || '',
+            token: res.token,
+            exp: res.exp || (Date.now() + DTAuth.config().TOKEN_TTL_DAYS * 86400000),
+            loginAt: Date.now(),
+            subEnd: res.subEnd || 0,
+            subLeft: res.subLeft || 0,
+            subStart: res.subStart || '',
+            subDays: res.subDays || 0
+          };
+          if(!DTAuth.writeAuth(auth)){
+            showError('تعذّر حفظ الجلسة على هذا المتصفح (قد يكون التصفح الخاص مفعّلاً).');
+            return;
+          }
+          /* لا مسح هنا: بيانات الحساب تُمسح عند تسجيل الخروج وبعد إثبات دقيق
+             من المزامنة أنها بلغت الشيت كاملاً (DT_DATA_SYNCED في auth.js)،
+             وإلا تبقى محفوظة باسم نطاق هذا الحساب فلا يضيع شيء ولا تختلط
+             ببيانات حساب لاحق. */
+          toApp();
+        })
+        .catch(function(err){
+          setBusy(false);
+          showError(DTAuth.humanTransportError(err));
+        });
+    });
+
+    /* رسالة اشتراك منتهٍ: نص موحّد موجز للمستخدم، والسبب الدقيق (الصف + القيم الخام +
+       النوع + تاريخ النهاية + الصفوف المكررة) يُطبع في سجل المطوّر (F12 → Console)
+       ويمكن استخراجه بـ diagnoseSub من محرر Apps Script. */
+    function subExpiredText(res){
+      var d = res && res.subDebug;
+      try{
+        if(d){
+          var why = (d.reason === 'ended')
+            ? 'انتهت المدة: بدأت ' + d.startISO + ' لمدة ' + d.days + ' يوماً وانتهت ' + (d.endISO || '؟') + ' (اليوم ' + d.today + ')'
+            : 'لم يُقرأ اشتراك صالح — «الاشتراك_أيام» (العمود ' + d.colDays + ') في الصف ' + d.row +
+              ' = «' + (d.daysRaw || 'فارغة') + '» نوع ' + d.daysType +
+              ' | «بدأ_الاشتراك» = «' + (d.startRaw || 'فارغ') + '» نوع ' + d.startType;
+          if(d.rows && d.rows.length > 1) why += ' | صفوف مكررة بنفس الرقم: ' + d.rows.join('، ');
+          console.warn('[اشتراك] ' + why, d);
+        }else{
+          console.warn('[اشتراك] الخادم لم يرسل subDebug — راجع نسخة النشر في Apps Script', res);
+        }
+      }catch(e){}
+      return SUB_ENDED_TEXT;
+    }
+
+    function mapServerError(res){
+      if(!res) return 'استجابة غير متوقعة من الخادم، حاول مجدداً.';
+      var e = res.error;
+      if(e === 'invalid') return 'رقم الهاتف أو كلمة المرور غير صحيحة.';
+      if(e === 'locked')  return 'محاولات دخول كثيرة خاطئة. حاول مجدداً بعد ' + (res.waitMin || 15) + ' دقيقة.';
+      if(e === 'blocked') return 'هذا الحساب موقوف، تواصل مع المطوّر.';
+      if(e === 'member_disabled') return 'تم تعطيل حسابك من صاحب المتجر. تواصل معه لإعادة تفعيله.';
+      if(e === 'other_device') return 'هذا الحساب مرتبط بجهاز آخر ولا يمكن الدخول منه هنا. تواصل مع المطوّر لربطه بجهازك.';
+      if(e === 'sub_expired') return subExpiredText(res);
+      if(e === 'no_device') return 'تعذّر تحديد هوية هذا الجهاز (التخزين معطّل). فعّل تخزين المتصفح ثم أعد المحاولة.';
+      if(e === 'server')  return 'تعذّر إتمام التحقق الآن، أعد المحاولة بعد قليل.';
+      if(e === 'bad-request') return 'طلب غير صالح، أعد المحاولة.';
+      return 'تعذّر تسجيل الدخول، أعد المحاولة.';
+    }
+
+    /* دخول تلقائي إن كانت الجلسة ما زالت صالحة */
+    showNotice();
+    if(alreadyLoggedIn()) toApp();
+  })();
+  </script>
+</body>
+</html>
